@@ -1,36 +1,134 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SweetSpot - Nosso Cantinho Digital
 
-## Getting Started
+Um site de casal com estética pixel art 8-bit para compartilhar memórias e mensagens.
 
-First, run the development server:
+## 🚀 Como Começar
 
+### Pré-requisitos
+- Node.js 18+ instalado
+- Conta no Supabase (opcional para desenvolvimento)
+
+### Instalação
+
+1. Clone o repositório e navegue até a pasta do projeto:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd sweetspot
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Instale as dependências:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Configure as variáveis de ambiente:
+```bash
+cp env.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Edite o arquivo `.env.local` com suas credenciais do Supabase (opcional - o site funciona com dados mockados sem configurar o Supabase).
 
-## Learn More
+4. Execute o servidor de desenvolvimento:
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+5. Abra [http://localhost:3000](http://localhost:3000) no seu navegador.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🎨 Características
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Design Pixel Art Autêntico**: Fontes 8-bit reais (Press Start 2P e VT323) para experiência retrô completa
+- **Galeria de Fotos**: Sistema completo para upload e exibição de memórias
+- **Sistema de Mensagens**: Chat para comunicação assíncrona entre parceiros
+- **Totalmente Responsivo**: Funciona perfeitamente em celulares, tablets e desktops
+- **Layout Adaptativo**: Navegação mobile bottom bar / desktop top bar
+- **Grid Responsivo**: Galeria adapta de 1 a 3 colunas conforme o tamanho da tela
+- **Bordas Quadradas**: Design sem arredondamentos para estética 8-bit pura
+- **Integração Supabase**: Banco de dados e storage (opcional)
 
-## Deploy on Vercel
+## 📱 Funcionalidades
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Página Inicial (Home)
+- Saudação personalizada
+- Navegação rápida para galeria e mensagens
+- Widget de música do dia
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Galeria de Fotos
+- Upload de fotos com categorização
+- Exibição em cards pixel art
+- Categorias coloridas (Viagem, Jantar, Fofura, etc.)
+- Botão flutuante para adicionar novas fotos
+
+### Sistema de Mensagens
+- Envio e recebimento de mensagens
+- Distinção visual entre remetentes
+- Histórico completo de conversas
+- Interface de chat pixel art
+
+## 🗄️ Configuração do Banco de Dados (Opcional)
+
+O site funciona com dados mockados sem configurar o Supabase. Para usar dados reais:
+
+1. Crie um projeto em [supabase.com](https://supabase.com)
+2. Execute o SQL abaixo no SQL Editor:
+
+```sql
+-- Tabela de mensagens
+CREATE TABLE messages (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  sender TEXT NOT NULL,
+  content TEXT NOT NULL,
+  timestamp TEXT NOT NULL,
+  is_read BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Tabela de fotos
+CREATE TABLE photos (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  title TEXT NOT NULL,
+  description TEXT,
+  image_url TEXT NOT NULL,
+  category TEXT NOT NULL,
+  date TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+3. Crie um bucket chamado `photos` no Storage
+4. Configure as variáveis de ambiente no `.env.local`
+
+## 🛠️ Tecnologias
+
+- **Next.js 16.3.3** - Framework React
+- **TypeScript** - Tipagem estática
+- **Tailwind CSS 4** - Estilização
+- **Supabase** - Banco de dados e storage
+- **Material Symbols** - Ícones
+
+## 📖 Documentação Completa
+
+Para documentação detalhada sobre o projeto, design system e implementação, consulte o arquivo [PROJECT_DOCUMENTATION.md](./PROJECT_DOCUMENTATION.md).
+
+## 🎯 Deploy
+
+Para fazer deploy na Vercel:
+
+1. Push o código para o GitHub
+2. Importe o projeto na Vercel
+3. Configure as variáveis de ambiente
+4. Deploy automático
+
+## 📝 Notas
+
+- O projeto usa Next.js App Router
+- Design system pixel art consistente em todo o site
+- Funciona offline com dados mockados
+- Pronto para produção com Supabase configurado
+
+## ❤️ Feito com Amor & Pixels
+
+Este projeto foi criado como um espaço digital especial para compartilhar momentos e memórias importantes.
+
+---
+
+Para mais informações, consulte a documentação completa em `PROJECT_DOCUMENTATION.md`.

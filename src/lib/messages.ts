@@ -1,0 +1,53 @@
+import { supabase, Message } from './supabase';
+
+export async function getMessages() {
+  if (!supabase) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from('messages')
+    .select('*')
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching messages:', error);
+    return [];
+  }
+
+  return data as Message[];
+}
+
+export async function sendMessage(sender: string, content: string) {
+  if (!supabase) {
+    return null;
+  }
+
+  const timestamp = new Date().toLocaleString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  const { data, error } = await supabase
+    .from('messages')
+    .insert([
+      {
+        sender,
+        content,
+        timestamp,
+        is_read: false
+      }
+    ])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error sending message:', error);
+    return null;
+  }
+
+  return data as Message;
+}

@@ -1,26 +1,238 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Pixel Amore Design System Colors */
+  --surface: #f9f9f9;
+  --surface-dim: #dadada;
+  --surface-bright: #f9f9f9;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f3f3f3;
+  --surface-container: #eeeeee;
+  --surface-container-high: #e8e8e8;
+  --surface-container-highest: #e2e2e2;
+  --on-surface: #1b1b1b;
+  --on-surface-variant: #574048;
+  --inverse-surface: #303030;
+  --inverse-on-surface: #f1f1f1;
+  --outline: #8b7079;
+  --outline-variant: #debec8;
+  --surface-tint: #b4136d;
+  --primary: #b10e6b;
+  --on-primary: #ffffff;
+  --primary-container: #d23284;
+  --on-primary-container: #fffbff;
+  --inverse-primary: #ffb0cd;
+  --secondary: #735c00;
+  --on-secondary: #ffffff;
+  --secondary-container: #fed01b;
+  --on-secondary-container: #6f5900;
+  --tertiary: #3f6700;
+  --on-tertiary: #ffffff;
+  --tertiary-container: #518200;
+  --on-tertiary-container: #f9ffea;
+  --error: #ba1a1a;
+  --on-error: #ffffff;
+  --error-container: #ffdad6;
+  --on-error-container: #93000a;
+  --primary-fixed: #ffd9e4;
+  --primary-fixed-dim: #ffb0cd;
+  --on-primary-fixed: #3e0022;
+  --on-primary-fixed-variant: #8c0053;
+  --secondary-fixed: #ffe083;
+  --secondary-fixed-dim: #eec200;
+  --on-secondary-fixed: #231b00;
+  --on-secondary-fixed-variant: #574500;
+  --tertiary-fixed: #acf847;
+  --tertiary-fixed-dim: #91db2a;
+  --on-tertiary-fixed: #102000;
+  --on-tertiary-fixed-variant: #304f00;
+  --background: #f9f9f9;
+  --on-background: #1b1b1b;
+  --surface-variant: #e2e2e2;
+  
+  /* Power-Up Colors */
+  --power-up-pink: #EC4899;
+  --level-up-yellow: #FACC15;
+  --growth-green: #84CC16;
+  --mana-blue: #3B82F6;
+  --border-black: #000000;
 }
 
 @theme inline {
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-foreground: var(--on-background);
+  --color-surface: var(--surface);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-surface-container-lowest: var(--surface-container-lowest);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-primary-container: var(--primary-container);
+  --color-on-primary-container: var(--on-primary-container);
+  --color-secondary: var(--secondary);
+  --color-on-secondary: var(--on-secondary);
+  --color-secondary-container: var(--secondary-container);
+  --color-on-secondary-container: var(--on-secondary-container);
+  --color-tertiary: var(--tertiary);
+  --color-on-tertiary: var(--on-tertiary);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-on-tertiary-container: var(--on-tertiary-container);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-error: var(--error);
+  --color-on-error: var(--on-error);
+  --color-error-container: var(--error-container);
+  --color-on-error-container: var(--on-error-container);
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+  --color-power-up-pink: var(--power-up-pink);
+  --color-level-up-yellow: var(--level-up-yellow);
+  --color-growth-green: var(--growth-green);
+  --color-mana-blue: var(--mana-blue);
+  --color-border-black: var(--border-black);
+  
+  /* Spacing - Pixel grid based */
+  --spacing-pixel-unit: 4px;
+  --spacing-grid-gutter: 16px;
+  --spacing-container-margin: 24px;
+  --spacing-block-shadow: 4px;
+  --spacing-border-width: 3px;
+  
+  /* Typography - Pixel Fonts */
+  --font-pixel: var(--font-pixel);
+  --font-pixel-body: var(--font-pixel-body);
+  
+  /* Border radius - No rounded corners for pixel art */
+  --radius-sm: 0;
+  --radius-default: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  --radius-full: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Pixel Art Design System Styles */
+* {
+  image-rendering: pixelated;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  font-smooth: never;
+}
+
+.retro-border {
+  border: 3px solid var(--border-black);
+}
+
+.retro-shadow {
+  box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+}
+
+.retro-shadow-lg {
+  box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1);
+}
+
+.active-press {
+  transition: transform 0.1s ease;
+}
+
+.active-press:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--on-background);
+  font-family: var(--font-pixel-body);
+  min-height: 100vh;
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+/* Typography Scale - Pixel Fonts */
+.font-headline-lg {
+  font-family: var(--font-pixel);
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.05em;
+}
+
+.font-headline-md {
+  font-family: var(--font-pixel);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.05em;
+}
+
+.font-headline-sm {
+  font-family: var(--font-pixel);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.05em;
+}
+
+.font-headline-lg-mobile {
+  font-family: var(--font-pixel);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.05em;
+}
+
+.font-body-lg {
+  font-family: var(--font-pixel-body);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.font-body-md {
+  font-family: var(--font-pixel-body);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.font-body-sm {
+  font-family: var(--font-pixel-body);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.font-label-lg {
+  font-family: var(--font-pixel);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.05em;
+}
+
+.font-label-sm {
+  font-family: var(--font-pixel);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.05em;
+}
+
+/* Custom scrollbar for webkit browsers - Pixel style */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-container);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--outline);
+  border: 3px solid var(--border-black);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--on-surface-variant);
 }
