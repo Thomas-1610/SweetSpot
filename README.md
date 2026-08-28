@@ -1,18 +1,50 @@
-# SweetSpot - Nosso Cantinho Digital
+# SweetSpot - Nosso Cantinho Digital 💕
 
-Um site de casal com estética pixel art 8-bit para compartilhar memórias e mensagens.
+Um site de casal romântico com estética pixel art 8-bit para compartilhar memórias, mensagens e momentos especiais. Criado como um espaço digital exclusivo para casais se conectarem e documentarem sua jornada juntos.
+
+## � Sobre o Projeto
+
+SweetSpot é uma aplicação web completa desenvolvida com Next.js e TypeScript, projetada para ser um cantinho digital onde casais podem:
+
+- **Compartilhar memórias** através de uma galeria de fotos categorizada
+- **Trocar mensagens** de forma assíncrona e romântica
+- **Receber notificações** quando novas mensagens são enviadas
+- **Gerenciar conteúdo** com sistema de seleção múltipla e exclusão
+- **Navegar facilmente** com interface responsiva e adaptativa
+
+O projeto combina a estética nostálgica dos jogos 8-bit com funcionalidades modernas, criando uma experiência única e personalizada.
+
+## 🎨 Características Principais
+
+### Design System Pixel Art
+- **Fontes Autênticas 8-bit**: Press Start 2P (títulos) e VT323 (corpo de texto) importadas do Google Fonts
+- **Bordas Quadradas**: Zero arredondamentos para estética retrô pura
+- **Paleta de Cores**: Cores vibrantes inspiradas em jogos clássicos
+- **Sombreamento Retro**: Efeitos de sombra estilo pixel art
+- **Ícones Material Symbols**: Adaptados para estética pixel
+
+### Funcionalidades Principais
+- **Galeria de Fotos Completa**: Upload, visualização, categorização e exclusão
+- **Sistema de Mensagens**: Chat assíncrono com seleção múltipla e exclusão em lote
+- **Modais Interativos**: Visualização expandida de fotos e mensagens
+- **Notificações Push**: Integração com OneSignal para alertas em tempo real
+- **Sistema de Seleção Múltipla**: Interface intuitiva para gerenciar conteúdo
+- **Design Responsivo**: Adaptação perfeita entre mobile e desktop
+- **Navegação Adaptativa**: Bottom bar (mobile) / Top bar (desktop)
 
 ## 🚀 Como Começar
 
 ### Pré-requisitos
 - Node.js 18+ instalado
 - Conta no Supabase (opcional para desenvolvimento)
+- Git instalado
 
 ### Instalação
 
-1. Clone o repositório e navegue até a pasta do projeto:
+1. Clone o repositório:
 ```bash
-cd sweetspot
+git clone https://github.com/Thomas-1610/SweetSpot.git
+cd SweetSpot/sweetspot
 ```
 
 2. Instale as dependências:
@@ -20,12 +52,12 @@ cd sweetspot
 npm install
 ```
 
-3. Configure as variáveis de ambiente:
+3. Configure as variáveis de ambiente (opcional):
 ```bash
-cp env.example .env.local
+# Crie o arquivo .env.local com suas credenciais do Supabase
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
-
-Edite o arquivo `.env.local` com suas credenciais do Supabase (opcional - o site funciona com dados mockados sem configurar o Supabase).
 
 4. Execute o servidor de desenvolvimento:
 ```bash
@@ -34,35 +66,36 @@ npm run dev
 
 5. Abra [http://localhost:3000](http://localhost:3000) no seu navegador.
 
-## 🎨 Características
+**Nota**: O site funciona perfeitamente com dados mockados sem configurar o Supabase. A configuração do Supabase é opcional e necessária apenas para persistir dados reais.
 
-- **Design Pixel Art Autêntico**: Fontes 8-bit reais (Press Start 2P e VT323) para experiência retrô completa
-- **Galeria de Fotos**: Sistema completo para upload e exibição de memórias
-- **Sistema de Mensagens**: Chat para comunicação assíncrona entre parceiros
-- **Totalmente Responsivo**: Funciona perfeitamente em celulares, tablets e desktops
-- **Layout Adaptativo**: Navegação mobile bottom bar / desktop top bar
-- **Grid Responsivo**: Galeria adapta de 1 a 3 colunas conforme o tamanho da tela
-- **Bordas Quadradas**: Design sem arredondamentos para estética 8-bit pura
-- **Integração Supabase**: Banco de dados e storage (opcional)
-
-## 📱 Funcionalidades
+## 📱 Funcionalidades Detalhadas
 
 ### Página Inicial (Home)
-- Saudação personalizada
+- Saudação personalizada e acolhedora
 - Navegação rápida para galeria e mensagens
-- Widget de música do dia
+- Widget de música do dia para compartilhar faixas favoritas
+- Design pixel art imersivo
 
 ### Galeria de Fotos
-- Upload de fotos com categorização
-- Exibição em cards pixel art
-- Categorias coloridas (Viagem, Jantar, Fofura, etc.)
-- Botão flutuante para adicionar novas fotos
+- **Upload de Fotos**: Sistema completo para adicionar novas memórias
+- **Categorização**: Categorias coloridas (Viagem, Jantar, Fofura, Celebration, Cozy, Arcade Date, Baking Chaos, Movie Night)
+- **Visualização em Cards**: Exibição em grid responsivo pixel art
+- **Modal Expandido**: Clique para ver foto em tamanho maior com detalhes
+- **Exclusão Individual**: Botão de exclusão no modal com confirmação
+- **Botão Flutuante**: Acesso rápido para adicionar novas fotos (mobile)
+- **Grid Adaptativo**: 1 coluna (mobile), 2 colunas (tablet), 3 colunas (desktop)
 
 ### Sistema de Mensagens
-- Envio e recebimento de mensagens
-- Distinção visual entre remetentes
-- Histórico completo de conversas
-- Interface de chat pixel art
+- **Envio e Recebimento**: Chat assíncrono completo
+- **Distinção Visual**: Cores diferentes para "Você" e parceiro
+- **Histórico Completo**: Todas as mensagens salvas e organizadas
+- **Interface Pixel Art**: Design consistente com o tema do site
+- **Modal de Visualização**: Clique para ver mensagem expandida
+- **Exclusão Individual**: Botão de exclusão no modal
+- **Seleção Múltipla**: Sistema avançado para selecionar várias mensagens
+- **Exclusão em Lote**: Delete múltiplas mensagens de uma vez
+- **Interface Intuitiva**: Checkboxes e feedback visual claro
+- **Notificações Push**: Integração com OneSignal (configurável)
 
 ## 🗄️ Configuração do Banco de Dados (Opcional)
 
@@ -94,41 +127,144 @@ CREATE TABLE photos (
 );
 ```
 
-3. Crie um bucket chamado `photos` no Storage
+3. Crie um bucket chamado `photos` no Storage com política pública
 4. Configure as variáveis de ambiente no `.env.local`
 
-## 🛠️ Tecnologias
+### Configuração de Notificações Push (Opcional)
 
-- **Next.js 16.3.3** - Framework React
-- **TypeScript** - Tipagem estática
-- **Tailwind CSS 4** - Estilização
-- **Supabase** - Banco de dados e storage
-- **Material Symbols** - Ícones
+Para habilitar notificações push, consulte o arquivo [PUSH_NOTIFICATIONS_SETUP.md](./PUSH_NOTIFICATIONS_SETUP.md) para instruções detalhadas de configuração do OneSignal.
 
-## 📖 Documentação Completa
+## 🏗️ Arquitetura do Projeto
 
-Para documentação detalhada sobre o projeto, design system e implementação, consulte o arquivo [PROJECT_DOCUMENTATION.md](./PROJECT_DOCUMENTATION.md).
+### Estrutura de Pastas
+```
+sweetspot/
+├── src/
+│   ├── app/              # Next.js App Router
+│   │   ├── galeria/      # Página da galeria de fotos
+│   │   ├── mensagens/    # Página de mensagens
+│   │   └── layout.tsx    # Layout principal
+│   ├── components/       # Componentes React
+│   │   ├── PhotoModal.tsx
+│   │   ├── MessageModal.tsx
+│   │   ├── PushNotificationPermission.tsx
+│   │   └── ...
+│   ├── hooks/           # Custom React hooks
+│   │   └── usePushNotifications.ts
+│   └── lib/             # Bibliotecas utilitárias
+│       ├── supabase.ts  # Cliente Supabase
+│       ├── messages.ts  # Funções de mensagens
+│       └── photos.ts    # Funções de fotos
+├── supabase/            # Configurações Supabase
+│   ├── functions/       # Edge Functions
+│   └── migrations/      # Migrations SQL
+├── public/              # Arquivos estáticos
+│   └── sw.js           # Service Worker
+└── package.json
+```
+
+### Componentes Principais
+- **PixelCard**: Componente base com estética pixel art
+- **PixelButton**: Botões estilizados pixel art
+- **PhotoModal**: Modal para visualização e exclusão de fotos
+- **MessageModal**: Modal para visualização e exclusão de mensagens
+- **Navigation**: Navegação adaptativa (mobile/desktop)
+- **Header**: Cabeçalho consistente
+
+### Hooks Personalizados
+- **usePushNotifications**: Gerenciamento de notificações push OneSignal
+
+## 🛠️ Tecnologias Utilizadas
+
+### Frontend
+- **Next.js 16.3.3** - Framework React com App Router
+- **TypeScript** - Tipagem estática para maior segurança
+- **Tailwind CSS 4** - Estilização utilitária
+- **React 18** - Biblioteca UI
+- **Material Symbols** - Ícones do Google
+
+### Backend & Banco de Dados
+- **Supabase** - Banco de dados PostgreSQL e Storage
+- **Supabase Edge Functions** - Funções serverless
+- **OneSignal** - Sistema de notificações push
+
+### Ferramentas de Desenvolvimento
+- **Turbopack** - Bundler rápido para desenvolvimento
+- **Git** - Controle de versão
+- **ESLint** - Linting de código
+- **TypeScript** - Verificação de tipos
+
+## 📜 Scripts Disponíveis
+
+```bash
+# Instalar dependências
+npm install
+
+# Executar servidor de desenvolvimento
+npm run dev
+
+# Build para produção
+npm run build
+
+# Iniciar servidor de produção
+npm start
+
+# Linting do código
+npm run lint
+```
 
 ## 🎯 Deploy
 
-Para fazer deploy na Vercel:
+### Vercel (Recomendado)
 
 1. Push o código para o GitHub
-2. Importe o projeto na Vercel
+2. Importe o projeto na [Vercel](https://vercel.com)
 3. Configure as variáveis de ambiente
 4. Deploy automático
 
-## 📝 Notas
+### Variáveis de Necessárias para Produção
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_ONESIGNAL_APP_ID=your_onesignal_app_id (opcional)
+```
 
-- O projeto usa Next.js App Router
-- Design system pixel art consistente em todo o site
-- Funciona offline com dados mockados
-- Pronto para produção com Supabase configurado
+## 🤝 Contribuindo
+
+Contribuições são bem-vindas! Sinta-se à vontade para:
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
+
+## 📝 Notas Importantes
+
+- **Design System**: O projeto usa um design system pixel art consistente em todo o site
+- **Dados Mockados**: O site funciona offline com dados mockados para desenvolvimento
+- **Produção**: Pronto para produção com Supabase configurado
+- **Responsividade**: Totalmente responsivo e otimizado para mobile
+- **Performance**: Otimizado com Next.js e Turbopack
+- **Acessibilidade**: Cores com bom contraste e navegação intuitiva
+
+## 🔐 Segurança
+
+- Chaves do Supabase são armazenadas em variáveis de ambiente
+- Service Role keys nunca são expostas no frontend
+- RLS (Row Level Security) configurado no Supabase
+- Tokens de push são armazenados de forma segura
+
+## 📄 Licença
+
+Este projeto é privado e criado para uso pessoal do casal.
 
 ## ❤️ Feito com Amor & Pixels
 
-Este projeto foi criado como um espaço digital especial para compartilhar momentos e memórias importantes.
+Este projeto foi criado como um espaço digital especial para compartilhar momentos e memórias importantes. Cada pixel foi colocado com carinho para criar um ambiente único e romântico.
 
 ---
 
-Para mais informações, consulte a documentação completa em `PROJECT_DOCUMENTATION.md`.
+**Desenvolvido com Next.js, TypeScript e muito amor 💕**
+
+Para mais informações técnicas, consulte a documentação completa em `PROJECT_DOCUMENTATION.md`.
