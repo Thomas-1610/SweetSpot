@@ -69,3 +69,41 @@ export async function uploadPhoto(file: File, title: string, description: string
 
   return photoData as Photo;
 }
+
+export async function deletePhoto(photoId: string, imageUrl: string) {
+  if (!supabase) {
+    return false;
+  }
+
+  try {
+    // Delete from database
+    const { error: dbError } = await supabase
+      .from('photos')
+      .delete()
+      .eq('id', photoId);
+
+    if (dbError) {
+      console.error('Error deleting photo from database:', dbError);
+      return false;
+    }
+
+    // Delete from storage (extract filename from URL)
+    const fileName = imageUrl.split('/').pop();
+    if (fileName) {
+      const { error: storageError } = await supabase
+        .storage
+        .from('photos')
+        .remove([fileName]);
+
+      if (storageError) {
+        console.error('Error deleting photo from storage:', storageError);
+        // Continue even if storage deletion fails
+      }
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error deleting photo:', error);
+    return false;
+  }
+}

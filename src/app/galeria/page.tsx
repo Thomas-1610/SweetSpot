@@ -5,6 +5,7 @@ import Header from '@/components/Header';
 import Navigation from '@/components/Navigation';
 import PixelCard from '@/components/PixelCard';
 import PhotoUpload from '@/components/PhotoUpload';
+import PhotoModal from '@/components/PhotoModal';
 import { getPhotos } from '@/lib/photos';
 import { Photo } from '@/lib/supabase';
 
@@ -12,6 +13,7 @@ export default function Galeria() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [showUpload, setShowUpload] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
 
   useEffect(() => {
     loadPhotos();
@@ -56,6 +58,11 @@ export default function Galeria() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDeletePhoto = () => {
+    loadPhotos();
+    setSelectedPhoto(null);
   };
 
   const getCategoryColor = (category: string) => {
@@ -112,25 +119,31 @@ export default function Galeria() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 {photos.map((photo) => (
-                  <PixelCard key={photo.id} className="flex flex-col gap-4 hover:-translate-y-2 hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] transition-transform duration-200">
-                    <div className="relative w-full aspect-square retro-border">
-                      <img 
-                        className="w-full h-full object-cover" 
-                        alt={photo.title}
-                        src={photo.image_url}
-                      />
-                      <div className={`absolute bottom-2 right-2 ${getCategoryColor(photo.category)} font-label-sm retro-border px-2 py-1 uppercase`}>
-                        {photo.category}
+                  <div 
+                    key={photo.id} 
+                    className="hover:-translate-y-2 hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] transition-transform duration-200 cursor-pointer"
+                    onClick={() => setSelectedPhoto(photo)}
+                  >
+                    <PixelCard className="flex flex-col gap-4">
+                      <div className="relative w-full aspect-square retro-border">
+                        <img 
+                          className="w-full h-full object-cover" 
+                          alt={photo.title}
+                          src={photo.image_url}
+                        />
+                        <div className={`absolute bottom-2 right-2 ${getCategoryColor(photo.category)} font-label-sm retro-border px-2 py-1 uppercase`}>
+                          {photo.category}
+                        </div>
                       </div>
-                    </div>
-                    <div>
-                      <div className="flex justify-between items-center border-b-[3px] border-on-surface pb-2 mb-2">
-                        <span className="font-headline-sm tracking-tighter" style={{ fontFamily: 'var(--font-pixel)' }}>{photo.title}</span>
-                        <span className="font-label-sm text-on-surface-variant" style={{ fontFamily: 'var(--font-pixel)' }}>{photo.date}</span>
+                      <div>
+                        <div className="flex justify-between items-center border-b-[3px] border-on-surface pb-2 mb-2">
+                          <span className="font-headline-sm tracking-tighter" style={{ fontFamily: 'var(--font-pixel)' }}>{photo.title}</span>
+                          <span className="font-label-sm text-on-surface-variant" style={{ fontFamily: 'var(--font-pixel)' }}>{photo.date}</span>
+                        </div>
+                        <p className="font-body-md text-on-surface line-clamp-2" style={{ fontFamily: 'var(--font-pixel-body)' }}>{photo.description}</p>
                       </div>
-                      <p className="font-body-md text-on-surface line-clamp-2" style={{ fontFamily: 'var(--font-pixel-body)' }}>{photo.description}</p>
-                    </div>
-                  </PixelCard>
+                    </PixelCard>
+                  </div>
                 ))}
               </div>
             )}
@@ -158,6 +171,15 @@ export default function Galeria() {
           </div>
         </div>
       </main>
+      
+      {/* Photo Modal */}
+      {selectedPhoto && (
+        <PhotoModal
+          photo={selectedPhoto}
+          onClose={() => setSelectedPhoto(null)}
+          onDelete={handleDeletePhoto}
+        />
+      )}
     </div>
   );
 }

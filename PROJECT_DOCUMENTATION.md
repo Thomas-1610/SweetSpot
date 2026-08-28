@@ -412,3 +412,47 @@ CREATE TABLE photos (
 ---
 
 Este documento foi criado para orientar tanto desenvolvimento humano quanto por IA, garantindo consistência e qualidade na implementação do SweetSpot.
+
+
+
+
+senha do supabase:
+$Thomas16102006$
+
+
+
+## Configurações do Supabase querys:
+-- Habilita a extensão de UUID se ainda não estiver ativa
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Tabela de mensagens
+CREATE TABLE messages (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  sender TEXT NOT NULL,
+  content TEXT NOT NULL,
+  timestamp TEXT NOT NULL,
+  is_read BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Tabela de fotos
+CREATE TABLE photos (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  title TEXT NOT NULL,
+  description TEXT,
+  image_url TEXT NOT NULL,
+  category TEXT NOT NULL,
+  date TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+
+
+
+-- Liberar acesso total de leitura e inserção para a tabela messages
+CREATE POLICY "Acesso publico messages" ON messages 
+  FOR ALL USING (true) WITH CHECK (true);
+
+-- Liberar acesso total de leitura e inserção para a tabela photos
+CREATE POLICY "Acesso publico photos" ON photos 
+  FOR ALL USING (true) WITH CHECK (true);

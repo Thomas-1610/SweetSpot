@@ -5,7 +5,9 @@ import Header from '@/components/Header';
 import Navigation from '@/components/Navigation';
 import PixelButton from '@/components/PixelButton';
 import PixelCard from '@/components/PixelCard';
-import { getMessages, sendMessage } from '@/lib/messages';
+// import PushNotificationPermission from '@/components/PushNotificationPermission';
+import MessageModal from '@/components/MessageModal';
+import { getMessages, sendMessage, deleteMessage } from '@/lib/messages';
 import { Message } from '@/lib/supabase';
 
 export default function Mensagens() {
@@ -13,6 +15,9 @@ export default function Mensagens() {
   const [newMessage, setNewMessage] = useState('');
   const [showCompose, setShowCompose] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
+  const [isMultiSelectMode, setIsMultiSelectMode] = useState(false);
+  const [selectedMessageIds, setSelectedMessageIds] = useState<string[]>([]);
 
   useEffect(() => {
     loadMessages();
@@ -48,6 +53,43 @@ export default function Mensagens() {
     }
   };
 
+  const handleDeleteMessage = () => {
+    loadMessages();
+    setSelectedMessage(null);
+  };
+
+  const toggleMultiSelectMode = () => {
+    setIsMultiSelectMode(!isMultiSelectMode);
+    setSelectedMessageIds([]);
+  };
+
+  const toggleMessageSelection = (messageId: string) => {
+    setSelectedMessageIds(prev => 
+      prev.includes(messageId) 
+        ? prev.filter(id => id !== messageId)
+        : [...prev, messageId]
+    );
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedMessageIds.length === 0) return;
+    
+    if (!confirm(`Tem certeza que deseja excluir ${selectedMessageIds.length} mensagem(ns)?`)) {
+      return;
+    }
+
+    try {
+      // Delete all selected messages
+      await Promise.all(selectedMessageIds.map(id => deleteMessage(id)));
+      loadMessages();
+      setIsMultiSelectMode(false);
+      setSelectedMessageIds([]);
+    } catch (error) {
+      console.error('Error deleting messages:', error);
+      alert('Erro ao excluir mensagens. Tente novamente.');
+    }
+  };
+
   const handleSendMessage = async () => {
     if (newMessage.trim()) {
       try {
@@ -80,6 +122,7 @@ export default function Mensagens() {
     <div className="min-h-screen bg-surface">
       <Header title="Mensagens" />
       <Navigation />
+      {/* <PushNotificationPermission userId="você" /> */}
       
       <main className="md:pt-20 pt-16 min-h-screen bg-surface">
         <div className="flex flex-col w-full max-w-4xl mx-auto px-6 py-6 md:py-12 gap-4 md:gap-6 pb-[80px] md:pb-12">
@@ -172,9 +215,37 @@ export default function Mensagens() {
 
           {/* Messages List */}
           <div className="flex flex-col gap-4 mt-4">
-            <h3 className="font-headline-sm uppercase tracking-tighter text-on-surface" style={{ fontFamily: 'var(--font-pixel)' }}>
-              Histórico de Mensagens
-            </h3>
+            <div className="flex justify-between items-center">
+              <h3 className="font-headline-sm uppercase tracking-tighter text-on-surface" style={{ fontFamily: 'var(--font-pixel)' }}>
+                Histórico de Mensagens
+              </h3>
+              
+              <div className="flex gap-2">
+                {/* Delete button in header when messages are selected */}
+                {isMultiSelectMode && selectedMessageIds.length > 0 && (
+                  <button
+                    onClick={handleDeleteSelected}
+                    className="w-8 h-8 flex items-center justify-center bg-error text-on-error hover:bg-error-container retro-border"
+                    style={{ borderRadius: '0' }}
+                    title={`Excluir ${selectedMessageIds.length} mensagem(ns)`}
+                  >
+                    <span className="material-symbols-outlined">delete</span>
+                  </button>
+                )}
+                
+                {/* Multi-select toggle button */}
+                <button
+                  onClick={toggleMultiSelectMode}
+                  className={`w-8 h-8 flex items-center justify-center transition-colors ${isMultiSelectMode ? 'bg-primary text-on-primary retro-border' : 'bg-surface-container text-on-surface'}`}
+                  style={{ borderRadius: '0' }}
+                  title={isMultiSelectMode ? 'Sair do modo seleção' : 'Selecionar múltiplas'}
+                >
+                  <span className="material-symbols-outlined">
+                    {isMultiSelectMode ? 'close' : 'check_box'}
+                  </span>
+                </button>
+              </div>
+            </div>
             
             {loading ? (
               <div className="text-center py-8">
@@ -187,24 +258,55 @@ export default function Mensagens() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {messages.map((message) => (
-                  <PixelCard 
+                  <div 
                     key={message.id} 
-                    className={`flex flex-col gap-2 ${message.sender === 'Você' ? 'border-l-[4px] border-l-primary' : 'border-l-[4px] border-l-secondary'}`}
+                    className="cursor-pointer"
+                    onClick={() => !isMultiSelectMode && setSelectedMessage(message)}
                   >
-                    <div className="flex justify-between items-center border-b-[3px] border-on-surface pb-2 mb-2">
-                      <span className={`font-label-sm uppercase ${message.sender === 'Você' ? 'text-primary' : 'text-secondary'}`}>
-                        {message.sender}
-                      </span>
-                      <span className="font-label-sm text-on-surface-variant">{message.timestamp}</span>
-                    </div>
-                    <p className="font-body-md text-on-surface">{message.content}</p>
-                  </PixelCard>
+                    <PixelCard 
+                      className={`flex flex-col gap-2 relative ${message.sender === 'Você' ? 'border-l-[4px] border-l-primary' : 'border-l-[4px] border-l-secondary'} ${selectedMessageIds.includes(message.id) ? 'bg-primary-container' : ''}`}
+                    >
+                      {/* Checkbox for multi-select mode */}
+                      {isMultiSelectMode && (
+                        <div 
+                          className="absolute top-2 right-2 z-10 cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleMessageSelection(message.id);
+                          }}
+                        >
+                          <div className={`w-6 h-6 flex items-center justify-center retro-border ${selectedMessageIds.includes(message.id) ? 'bg-primary text-on-primary' : 'bg-surface text-on-surface'}`}>
+                            {selectedMessageIds.includes(message.id) && (
+                              <span className="material-symbols-outlined text-sm">check</span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className="flex justify-between items-center border-b-[3px] border-on-surface pb-2 mb-2">
+                        <span className={`font-label-sm uppercase ${message.sender === 'Você' ? 'text-primary' : 'text-secondary'}`}>
+                          {message.sender}
+                        </span>
+                        <span className="font-label-sm text-on-surface-variant">{message.timestamp}</span>
+                      </div>
+                      <p className="font-body-md text-on-surface">{message.content}</p>
+                    </PixelCard>
+                  </div>
                 ))}
               </div>
             )}
           </div>
         </div>
       </main>
+      
+      {/* Message Modal */}
+      {selectedMessage && (
+        <MessageModal
+          message={selectedMessage}
+          onClose={() => setSelectedMessage(null)}
+          onDelete={handleDeleteMessage}
+        />
+      )}
     </div>
   );
 }
