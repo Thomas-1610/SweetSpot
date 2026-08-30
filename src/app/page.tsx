@@ -3,6 +3,7 @@ import Navigation from '@/components/Navigation';
 import PixelButton from '@/components/PixelButton';
 import PixelCard from '@/components/PixelCard';
 import Link from 'next/link';
+import MusicaDoDia from '@/components/MusicaDoDia';
 
 export default function Home() {
   return (
@@ -52,28 +53,9 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Music Section */}
-          <div className="mt-8 md:mt-12 w-full max-w-2xl mx-auto">
-            <PixelCard className="flex flex-col gap-2 relative overflow-hidden group">
-              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-50"></div>
-              
-              <div className="border-b-[3px] border-on-surface pb-2 mb-2 relative z-10 flex items-center gap-2">
-                <span className="material-symbols-outlined text-on-surface text-[18px] md:text-[20px]">music_note</span>
-                <h3 className="font-label-sm md:font-label-lg uppercase tracking-widest text-on-surface">Música do Dia</h3>
-              </div>
-              
-              <div className="flex items-center justify-between relative z-10">
-                <div className="flex flex-col">
-                  <span className="font-headline-sm md:font-headline-md text-on-surface leading-tight" style={{ fontFamily: 'var(--font-pixel)' }}>Perfect</span>
-                  <span className="font-body-sm md:font-body-md text-on-surface-variant" style={{ fontFamily: 'var(--font-pixel-body)' }}>Ed Sheeran</span>
-                </div>
-                <button className="w-10 h-10 md:w-12 md:h-12 bg-tertiary-container text-on-tertiary-container retro-border flex items-center justify-center retro-shadow active-press transition-transform">
-                  <span className="material-symbols-outlined text-[20px] md:text-[24px]" style={{ fontVariationSettings: '"FILL" 1' }}>
-                    play_arrow
-                  </span>
-                </button>
-              </div>
-            </PixelCard>
+          {/* Music Player */}
+          <div className="mt-8 md:mt-12 max-w-2xl mx-auto">
+            <MusicaDoDia />
           </div>
         </div>
       </main>
