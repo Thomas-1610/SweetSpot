@@ -136,9 +136,9 @@ export default function Galeria() {
                         </div>
                       </div>
                       <div>
-                        <div className="flex justify-between items-center border-b-[3px] border-on-surface pb-2 mb-2">
-                          <span className="font-headline-sm tracking-tighter" style={{ fontFamily: 'var(--font-pixel)' }}>{photo.title}</span>
-                          <span className="font-label-sm text-on-surface-variant" style={{ fontFamily: 'var(--font-pixel)' }}>{photo.date}</span>
+                        <div className="flex justify-between items-center border-b-[3px] border-on-surface pb-2 mb-2 gap-2">
+                          <span className="font-headline-sm tracking-tighter truncate max-w-[65%]" style={{ fontFamily: 'var(--font-pixel)' }} title={photo.title}>{photo.title}</span>
+                          <span className="font-label-sm text-on-surface-variant flex-shrink-0" style={{ fontFamily: 'var(--font-pixel)' }}>{photo.date}</span>
                         </div>
                         <p className="font-body-md text-on-surface line-clamp-2" style={{ fontFamily: 'var(--font-pixel-body)' }}>{photo.description}</p>
                       </div>

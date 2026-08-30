@@ -121,23 +121,23 @@ export default function PhotoUpload({ onUploadComplete, onClose }: PhotoUploadPr
         />
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex flex-col md:flex-row gap-2">
         <PixelButton 
           variant="primary" 
-          size="md"
           onClick={handleUpload}
           disabled={uploading}
-          className="flex-1"
+          className="flex-1 flex items-center justify-center gap-2 h-14"
+          style={{ boxShadow: '2px 2px 0px 0px rgba(0,0,0,1)' }}
         >
           <span className="material-symbols-outlined">upload</span>
           <span>{uploading ? 'Enviando...' : 'Enviar'}</span>
         </PixelButton>
         <PixelButton 
           variant="outline" 
-          size="md"
           onClick={onClose}
           disabled={uploading}
-          className="flex-1"
+          className="flex-1 flex items-center justify-center gap-2 h-14"
+          style={{ boxShadow: '2px 2px 0px 0px rgba(0,0,0,1)' }}
         >
           <span>Cancelar</span>
         </PixelButton>

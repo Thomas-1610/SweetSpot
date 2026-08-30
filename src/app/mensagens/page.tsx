@@ -156,7 +156,7 @@ export default function Mensagens() {
                   variant="primary" 
                   size="md"
                   onClick={handleSendMessage}
-                  className="flex-1"
+                  className="flex-1 flex items-center justify-center gap-2"
                 >
                   <span className="material-symbols-outlined">send</span>
                   <span>Enviar</span>
@@ -196,7 +196,7 @@ export default function Mensagens() {
                   variant="primary" 
                   size="md"
                   onClick={handleSendMessage}
-                  className="flex-1"
+                  className="flex-1 flex items-center justify-center gap-2"
                 >
                   <span className="material-symbols-outlined">send</span>
                   <span>Enviar</span>
