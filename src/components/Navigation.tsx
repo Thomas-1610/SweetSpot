@@ -32,7 +32,7 @@ export default function Navigation() {
                   href={item.path}
                   className={`font-label-lg px-4 py-2 retro-border active-press transition-colors ${
                     isActive 
-                      ? 'bg-secondary-container text-on-secondary-container' 
+                      ? 'bg-secondary-container text-on-surface' 
                       : 'bg-surface text-on-surface hover:bg-surface-container'
                   }`}
                 >
@@ -59,7 +59,7 @@ export default function Navigation() {
                 href={item.path}
                 className={`flex-1 flex flex-col items-center justify-center gap-1 transition-colors active-press ${
                   isActive 
-                    ? 'bg-secondary-container text-on-secondary-container' 
+                    ? 'bg-secondary-container text-on-surface' 
                     : 'text-on-surface border-l-[3px] border-on-surface'
                 }`}
               >
