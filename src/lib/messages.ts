@@ -49,7 +49,13 @@ export async function sendMessage(sender: string, content: string, userId?: stri
     .single();
 
   if (error) {
-    console.error('Error sending message:', error);
+    console.error(
+      'Error sending message:',
+      error.message,
+      error.code,
+      error.details,
+      error.hint
+    );
     return null;
   }
 

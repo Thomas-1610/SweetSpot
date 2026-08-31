@@ -4,13 +4,15 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import UserProfile from './UserProfile';
-import { getCurrentUser } from '@/lib/auth';
+import { getCurrentUser, User } from '@/lib/auth';
 
 export default function Navigation() {
   const pathname = usePathname();
-  const [currentUser, setCurrentUser] = useState(getCurrentUser());
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     setCurrentUser(getCurrentUser());
   }, []);
   
@@ -49,7 +51,7 @@ export default function Navigation() {
             })}
           </div>
           
-          {currentUser ? (
+          {mounted && currentUser ? (
             <div className="flex-shrink-0">
               <UserProfile />
             </div>
