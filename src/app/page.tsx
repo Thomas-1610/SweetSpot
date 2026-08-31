@@ -2,13 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Header from '@/components/Header';
-import Navigation from '@/components/Navigation';
 import PixelButton from '@/components/PixelButton';
 import PixelCard from '@/components/PixelCard';
 import Link from 'next/link';
 import MusicaDoDia from '@/components/MusicaDoDia';
-import UserProfile from '@/components/UserProfile';
 import { getCurrentUser, User } from '@/lib/auth';
 
 export default function Home() {
@@ -32,15 +29,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-surface">
-      <Header title="Home" />
-      <Navigation />
-      
       <main className="md:pt-20 pt-16 min-h-screen bg-surface overflow-x-hidden">
         <div className="flex flex-col w-full max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-12 gap-4 md:gap-8 pb-[80px] md:pb-12">
-          {/* User Profile - Desktop */}
-          <div className="hidden md:flex justify-end mb-4">
-            <UserProfile />
-          </div>
           {/* Welcome Section */}
           <div className="flex flex-col items-center justify-center py-8 md:py-16">
             <div className="w-16 h-16 md:w-24 md:h-24 bg-primary-container flex items-center justify-center retro-border retro-shadow active-press transition-transform mb-4 md:mb-6">

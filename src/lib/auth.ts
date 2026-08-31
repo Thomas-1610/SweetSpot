@@ -15,39 +15,80 @@ export interface AuthResponse {
 
 // Chave para armazenar a sessão no localStorage
 const SESSION_KEY = 'sweetspot_session';
+const SESSION_EVENT = 'sweetspot-session-change';
 
-// Verificar se há um usuário logado
-export function getCurrentUser(): User | null {
+let cachedSessionRaw: string | null = null;
+let cachedUser: User | null = null;
+let hasReadCache = false;
+
+function readSession(): User | null {
   if (typeof window === 'undefined') return null;
-  
+
   try {
     const sessionData = localStorage.getItem(SESSION_KEY);
-    if (sessionData) {
-      return JSON.parse(sessionData) as User;
+    if (hasReadCache && sessionData === cachedSessionRaw) {
+      return cachedUser;
     }
+
+    hasReadCache = true;
+    cachedSessionRaw = sessionData;
+    cachedUser = sessionData ? (JSON.parse(sessionData) as User) : null;
+    return cachedUser;
   } catch (error) {
     console.error('Error reading session:', error);
+    hasReadCache = true;
+    cachedSessionRaw = null;
+    cachedUser = null;
+    return null;
   }
-  return null;
 }
 
-// Salvar sessão do usuário
+function emitSessionChange() {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(new Event(SESSION_EVENT));
+}
+
+export function subscribeToSession(onStoreChange: () => void) {
+  if (typeof window === 'undefined') {
+    return () => {};
+  }
+
+  window.addEventListener(SESSION_EVENT, onStoreChange);
+  window.addEventListener('storage', onStoreChange);
+  return () => {
+    window.removeEventListener(SESSION_EVENT, onStoreChange);
+    window.removeEventListener('storage', onStoreChange);
+  };
+}
+
+export function getCurrentUser(): User | null {
+  return readSession();
+}
+
 export function saveSession(user: User): void {
   if (typeof window === 'undefined') return;
   
   try {
-    localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+    const raw = JSON.stringify(user);
+    localStorage.setItem(SESSION_KEY, raw);
+    hasReadCache = true;
+    cachedSessionRaw = raw;
+    cachedUser = user;
+    emitSessionChange();
   } catch (error) {
     console.error('Error saving session:', error);
   }
 }
 
-// Remover sessão (logout)
 export function clearSession(): void {
   if (typeof window === 'undefined') return;
   
   try {
     localStorage.removeItem(SESSION_KEY);
+    hasReadCache = true;
+    cachedSessionRaw = null;
+    cachedUser = null;
+    emitSessionChange();
   } catch (error) {
     console.error('Error clearing session:', error);
   }

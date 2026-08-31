@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Header from '@/components/Header';
-import Navigation from '@/components/Navigation';
 import PixelButton from '@/components/PixelButton';
 import PixelCard from '@/components/PixelCard';
 // import PushNotificationPermission from '@/components/PushNotificationPermission';
@@ -131,8 +129,6 @@ export default function Mensagens() {
 
   return (
     <div className="min-h-screen bg-surface">
-      <Header title="Mensagens" />
-      <Navigation />
       {/* <PushNotificationPermission userId="você" /> */}
       
       <main className="md:pt-20 pt-16 min-h-screen bg-surface overflow-x-hidden">

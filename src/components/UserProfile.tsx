@@ -1,22 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import PixelButton from './PixelButton';
 import PixelCard from './PixelCard';
 import ProfilePhotoUpload from './ProfilePhotoUpload';
-import { getCurrentUser, logoutUser, saveSession, User } from '@/lib/auth';
+import { getCurrentUser, logoutUser, saveSession, subscribeToSession } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
 
 export default function UserProfile() {
-  const [user, setUser] = useState<User | null>(null);
+  const user = useSyncExternalStore(subscribeToSession, getCurrentUser, () => null);
   const [showMenu, setShowMenu] = useState(false);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    const currentUser = getCurrentUser();
-    setUser(currentUser);
-  }, []);
 
   const handleLogout = () => {
     logoutUser();
@@ -25,32 +20,32 @@ export default function UserProfile() {
 
   const handlePhotoUpdated = (newPhotoUrl: string) => {
     if (user) {
-      const updatedUser = { ...user, profile_image_url: newPhotoUrl };
-      setUser(updatedUser);
-      saveSession(updatedUser);
+      saveSession({ ...user, profile_image_url: newPhotoUrl });
     }
   };
 
-  if (!user) return null;
+  if (!user) {
+    return <div className="w-11 h-11 md:w-[52px] md:h-[52px] flex-shrink-0" aria-hidden />;
+  }
 
   return (
     <>
       <div className="relative">
         <button
           onClick={() => setShowMenu(!showMenu)}
-          className="flex items-center gap-1 md:gap-2 p-1 md:p-2 hover:bg-surface-container transition-colors retro-border flex-shrink-0"
+          className="flex items-center gap-1 md:gap-2 hover:bg-surface-container transition-colors flex-shrink-0"
           style={{ borderRadius: '0' }}
         >
           {user.profile_image_url ? (
             <img
               src={user.profile_image_url}
               alt={user.username}
-              className="w-8 h-8 md:w-10 md:h-10 object-cover"
+              className="w-11 h-11 md:w-[52px] md:h-[52px] object-cover retro-border"
               style={{ borderRadius: '0' }}
             />
           ) : (
-            <div className="w-8 h-8 md:w-10 md:h-10 bg-primary-container flex items-center justify-center retro-border">
-              <span className="material-symbols-outlined text-on-primary-container text-lg md:text-xl">person</span>
+            <div className="w-11 h-11 md:w-[52px] md:h-[52px] bg-primary-container flex items-center justify-center retro-border">
+              <span className="material-symbols-outlined text-on-primary-container text-xl md:text-2xl">person</span>
             </div>
           )}
           <span className="font-label-sm text-on-surface hidden md:block whitespace-nowrap" style={{ fontFamily: 'var(--font-pixel)' }}>
@@ -69,7 +64,7 @@ export default function UserProfile() {
                   <img
                     src={user.profile_image_url}
                     alt={user.username}
-                    className="w-10 h-10 md:w-12 md:h-12 object-cover flex-shrink-0"
+                    className="w-10 h-10 md:w-12 md:h-12 object-cover flex-shrink-0 retro-border"
                     style={{ borderRadius: '0' }}
                   />
                 ) : (

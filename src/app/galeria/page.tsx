@@ -2,12 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Header from '@/components/Header';
-import Navigation from '@/components/Navigation';
 import PixelCard from '@/components/PixelCard';
 import PhotoUpload from '@/components/PhotoUpload';
 import PhotoModal from '@/components/PhotoModal';
-import UserProfile from '@/components/UserProfile';
 import { getPhotos } from '@/lib/photos';
 import { Photo } from '@/lib/supabase';
 import { getCurrentUser, User } from '@/lib/auth';
@@ -92,15 +89,8 @@ export default function Galeria() {
 
   return (
     <div className="min-h-screen bg-surface">
-      <Header title="Galeria" />
-      <Navigation />
-      
       <main className="md:pt-20 pt-16 min-h-screen bg-surface overflow-x-hidden">
         <div className="flex flex-col w-full max-w-7xl mx-auto pb-32 md:pb-12">
-          {/* User Profile - Desktop */}
-          <div className="hidden md:flex justify-end mb-4 px-4 md:px-6 py-6">
-            <UserProfile />
-          </div>
           {showUpload && (
             <div className="px-4 md:px-6 py-6">
               <PhotoUpload 

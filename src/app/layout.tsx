@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Press_Start_2P, VT323 } from "next/font/google";
-import Script from "next/script";
+import AppChrome from "@/components/AppChrome";
 import "./globals.css";
 
 const pressStart2P = Press_Start_2P({
@@ -71,7 +71,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         /> */}
       </head>
       <body className="min-h-full flex flex-col overflow-x-hidden">
-        <main>{children}</main>
+        <AppChrome>{children}</AppChrome>
       </body>
     </html>
   );
