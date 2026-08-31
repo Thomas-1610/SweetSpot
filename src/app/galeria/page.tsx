@@ -1,23 +1,34 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Navigation from '@/components/Navigation';
 import PixelCard from '@/components/PixelCard';
 import PhotoUpload from '@/components/PhotoUpload';
 import PhotoModal from '@/components/PhotoModal';
+import UserProfile from '@/components/UserProfile';
 import { getPhotos } from '@/lib/photos';
 import { Photo } from '@/lib/supabase';
+import { getCurrentUser, User } from '@/lib/auth';
 
 export default function Galeria() {
+  const router = useRouter();
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [showUpload, setShowUpload] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
 
   useEffect(() => {
+    const user = getCurrentUser();
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    setCurrentUser(user);
     loadPhotos();
-  }, []);
+  }, [router]);
 
   const loadPhotos = async () => {
     try {
@@ -84,10 +95,14 @@ export default function Galeria() {
       <Header title="Galeria" />
       <Navigation />
       
-      <main className="md:pt-20 pt-16 min-h-screen bg-surface">
+      <main className="md:pt-20 pt-16 min-h-screen bg-surface overflow-x-hidden">
         <div className="flex flex-col w-full max-w-7xl mx-auto pb-32 md:pb-12">
+          {/* User Profile - Desktop */}
+          <div className="hidden md:flex justify-end mb-4 px-4 md:px-6 py-6">
+            <UserProfile />
+          </div>
           {showUpload && (
-            <div className="px-6 py-6">
+            <div className="px-4 md:px-6 py-6">
               <PhotoUpload 
                 onUploadComplete={() => {
                   loadPhotos();
@@ -98,7 +113,7 @@ export default function Galeria() {
             </div>
           )}
 
-          <div className="px-6 py-6 md:py-12">
+          <div className="px-4 md:px-6 py-6 md:py-12">
             <div className="mb-8 md:mb-12">
               <h1 className="font-headline-lg md:font-headline-lg text-on-surface uppercase tracking-tighter mb-2" style={{ fontFamily: 'var(--font-pixel)' }}>
                 Nossa Galeria

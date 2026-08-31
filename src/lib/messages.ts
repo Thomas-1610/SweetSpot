@@ -18,7 +18,7 @@ export async function getMessages() {
   return data as Message[];
 }
 
-export async function sendMessage(sender: string, content: string) {
+export async function sendMessage(sender: string, content: string, userId?: string) {
   if (!supabase) {
     return null;
   }
@@ -31,16 +31,20 @@ export async function sendMessage(sender: string, content: string) {
     minute: '2-digit'
   });
 
+  const messageData: any = {
+    sender,
+    content,
+    timestamp,
+    is_read: false
+  };
+
+  if (userId) {
+    messageData.user_id = userId;
+  }
+
   const { data, error } = await supabase
     .from('messages')
-    .insert([
-      {
-        sender,
-        content,
-        timestamp,
-        is_read: false
-      }
-    ])
+    .insert([messageData])
     .select()
     .single();
 

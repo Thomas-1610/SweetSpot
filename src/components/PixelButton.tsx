@@ -13,7 +13,7 @@ export default function PixelButton({
   className = '',
   ...props 
 }: PixelButtonProps) {
-  const baseStyles = 'retro-border retro-shadow active-press font-label-lg uppercase tracking-widest transition-transform';
+  const baseStyles = 'retro-border retro-shadow active-press font-label-lg uppercase tracking-widest transition-transform flex items-center justify-center gap-2 whitespace-nowrap overflow-hidden';
   
   const variantStyles = {
     primary: 'bg-primary text-on-primary',
@@ -23,9 +23,9 @@ export default function PixelButton({
   };
   
   const sizeStyles = {
-    sm: 'h-10 px-4 text-xs',
-    md: 'h-12 px-6 text-sm',
-    lg: 'h-16 px-8 text-base',
+    sm: 'h-10 px-2 md:px-4 text-[10px] md:text-xs',
+    md: 'h-12 px-3 md:px-6 text-xs md:text-sm',
+    lg: 'h-16 px-4 md:px-8 text-sm md:text-base',
   };
   
   return (

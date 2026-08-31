@@ -69,7 +69,7 @@ export default function MusicaDoDia() {
   };
 
   return (
-    <div className="w-full max-w-md">
+    <div className="w-full overflow-hidden">
       <div className="bg-surface retro-border retro-shadow-lg p-4 flex flex-col gap-4">
         {/* Header */}
         <div className="flex flex-col gap-2">

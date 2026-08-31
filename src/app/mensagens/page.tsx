@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Navigation from '@/components/Navigation';
 import PixelButton from '@/components/PixelButton';
@@ -9,8 +10,11 @@ import PixelCard from '@/components/PixelCard';
 import MessageModal from '@/components/MessageModal';
 import { getMessages, sendMessage, deleteMessage } from '@/lib/messages';
 import { Message } from '@/lib/supabase';
+import { getCurrentUser, User } from '@/lib/auth';
 
 export default function Mensagens() {
+  const router = useRouter();
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [showCompose, setShowCompose] = useState(false);
@@ -20,8 +24,14 @@ export default function Mensagens() {
   const [selectedMessageIds, setSelectedMessageIds] = useState<string[]>([]);
 
   useEffect(() => {
+    const user = getCurrentUser();
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    setCurrentUser(user);
     loadMessages();
-  }, []);
+  }, [router]);
 
   const loadMessages = async () => {
     try {
@@ -91,9 +101,9 @@ export default function Mensagens() {
   };
 
   const handleSendMessage = async () => {
-    if (newMessage.trim()) {
+    if (newMessage.trim() && currentUser) {
       try {
-        const sentMessage = await sendMessage('Você', newMessage);
+        const sentMessage = await sendMessage(currentUser.username, newMessage, currentUser.id);
         if (sentMessage) {
           setMessages([...messages, sentMessage]);
           setNewMessage('');
@@ -102,11 +112,12 @@ export default function Mensagens() {
           // Fallback if Supabase is not configured
           const message: Message = {
             id: `${Date.now()}`,
-            sender: 'Você',
+            sender: currentUser.username,
             content: newMessage,
             timestamp: 'Agora',
             is_read: true,
-            created_at: new Date().toISOString()
+            created_at: new Date().toISOString(),
+            user_id: currentUser.id
           };
           setMessages([...messages, message]);
           setNewMessage('');
@@ -124,8 +135,8 @@ export default function Mensagens() {
       <Navigation />
       {/* <PushNotificationPermission userId="você" /> */}
       
-      <main className="md:pt-20 pt-16 min-h-screen bg-surface">
-        <div className="flex flex-col w-full max-w-4xl mx-auto px-6 py-6 md:py-12 gap-4 md:gap-6 pb-[80px] md:pb-12">
+      <main className="md:pt-20 pt-16 min-h-screen bg-surface overflow-x-hidden">
+        <div className="flex flex-col w-full max-w-4xl mx-auto px-4 md:px-6 py-6 md:py-12 gap-4 md:gap-6 pb-[80px] md:pb-12">
           {/* Header Section */}
           <div className="mb-8 md:mb-12">
             <h1 className="font-headline-lg md:font-headline-lg text-on-surface uppercase tracking-tighter mb-2" style={{ fontFamily: 'var(--font-pixel)' }}>
@@ -191,12 +202,12 @@ export default function Mensagens() {
                   style={{ borderRadius: '0' }}
                 />
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <PixelButton 
                   variant="primary" 
                   size="md"
                   onClick={handleSendMessage}
-                  className="flex-1 flex items-center justify-center gap-2"
+                  className="flex items-center justify-center gap-2 w-full sm:flex-1"
                 >
                   <span className="material-symbols-outlined">send</span>
                   <span>Enviar</span>
@@ -205,7 +216,7 @@ export default function Mensagens() {
                   variant="outline" 
                   size="md"
                   onClick={() => setShowCompose(false)}
-                  className="flex-1"
+                  className="w-full sm:flex-1"
                 >
                   <span>Cancelar</span>
                 </PixelButton>
