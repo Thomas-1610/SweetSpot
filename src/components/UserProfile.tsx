@@ -76,7 +76,7 @@ export default function UserProfile() {
                   <p className="font-label-sm text-on-surface truncate" style={{ fontFamily: 'var(--font-pixel)' }}>
                     {user.username}
                   </p>
-                  <p className="font-label-sm text-on-surface-variant" style={{ fontFamily: 'var(--font-pixel)' }}>
+                  <p className="font-label-sm text-on-surface-variant" style={{ fontFamily: 'var(--font-pixel)', color: 'var(--tertiary-container)' }}>
                     Online
                   </p>
                 </div>
@@ -92,7 +92,7 @@ export default function UserProfile() {
                 className="flex items-center justify-center gap-2 w-full text-xs md:text-sm"
               >
                 <span className="material-symbols-outlined text-lg">edit</span>
-                <span>Alterar Foto</span>
+                <span>Editar</span>
               </PixelButton>
               
               <PixelButton

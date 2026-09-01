@@ -70,8 +70,8 @@ export default function ProfilePhotoUpload({ user, onPhotoUpdated, onClose }: Pr
             <span className="material-symbols-outlined text-3xl">close</span>
           </button>
 
-          <h3 className="font-headline-lg uppercase tracking-tighter text-on-surface text-center" style={{ fontFamily: 'var(--font-pixel)' }}>
-            Alterar Foto de Perfil
+          <h3 className="text-base uppercase tracking-tighter text-on-surface text-center" style={{ fontFamily: 'var(--font-pixel)' }}>
+            Alterar Foto
           </h3>
 
           {/* Current/Preview Photo */}
