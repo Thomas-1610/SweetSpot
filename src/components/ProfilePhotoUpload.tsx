@@ -17,6 +17,14 @@ export default function ProfilePhotoUpload({ user, onPhotoUpdated, onClose }: Pr
   const [preview, setPreview] = useState<string | null>(user.profile_image_url || null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
+  const [isClosing, setIsClosing] = useState(false);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      onClose();
+    }, 200);
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -46,7 +54,7 @@ export default function ProfilePhotoUpload({ user, onPhotoUpdated, onClose }: Pr
       
       if (photoUrl) {
         onPhotoUpdated(photoUrl);
-        onClose();
+        handleClose();
       } else {
         setError('Erro ao fazer upload da foto. Verifique se o bucket "profile-photos" existe no Supabase Storage.');
       }
@@ -59,12 +67,12 @@ export default function ProfilePhotoUpload({ user, onPhotoUpdated, onClose }: Pr
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="relative w-full max-w-md max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+    <div className={`fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 ${isClosing ? 'animate-backdrop-out' : 'animate-backdrop-in'}`} onClick={handleClose}>
+      <div className={`relative w-full max-w-md max-h-[90vh] overflow-y-auto ${isClosing ? 'animate-modal-out' : 'animate-modal-in'}`} onClick={(e) => e.stopPropagation()}>
         <PixelCard className="flex flex-col gap-4">
           {/* Close button */}
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="absolute top-4 right-4 z-10 text-error hover:text-error-container transition-colors flex items-center justify-center"
           >
             <span className="material-symbols-outlined text-3xl">close</span>
@@ -130,7 +138,7 @@ export default function ProfilePhotoUpload({ user, onPhotoUpdated, onClose }: Pr
             </PixelButton>
             <PixelButton
               variant="outline"
-              onClick={onClose}
+              onClick={handleClose}
               disabled={uploading}
               className="flex-1"
             >

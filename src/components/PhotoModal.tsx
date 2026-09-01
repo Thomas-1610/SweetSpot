@@ -14,6 +14,14 @@ interface PhotoModalProps {
 
 export default function PhotoModal({ photo, onClose, onDelete }: PhotoModalProps) {
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      onClose();
+    }, 200);
+  };
 
   const handleDelete = async () => {
     if (!confirm('Tem certeza que deseja excluir esta foto?')) {
@@ -25,7 +33,7 @@ export default function PhotoModal({ photo, onClose, onDelete }: PhotoModalProps
       const success = await deletePhoto(photo.id, photo.image_url);
       if (success) {
         onDelete();
-        onClose();
+        handleClose();
       } else {
         alert('Erro ao excluir foto. Tente novamente.');
       }
@@ -38,12 +46,12 @@ export default function PhotoModal({ photo, onClose, onDelete }: PhotoModalProps
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="relative max-w-4xl w-full max-h-[90vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
+    <div className={`fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 ${isClosing ? 'animate-backdrop-out' : 'animate-backdrop-in'}`} onClick={handleClose}>
+      <div className={`relative max-w-4xl w-full max-h-[90vh] overflow-auto ${isClosing ? 'animate-modal-out' : 'animate-modal-in'}`} onClick={(e) => e.stopPropagation()}>
         <PixelCard className="flex flex-col gap-4">
           {/* Close button */}
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="absolute top-4 right-4 z-10 bg-error text-on-error w-10 h-10 retro-border flex items-center justify-center hover:bg-error-container"
             style={{ borderRadius: '0' }}
           >

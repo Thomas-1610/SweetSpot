@@ -11,11 +11,30 @@ export default function UserProfile() {
   const user = useSyncExternalStore(subscribeToSession, getCurrentUser, () => null);
   const [showMenu, setShowMenu] = useState(false);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
+  const [isMenuClosing, setIsMenuClosing] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
 
+  const handleToggleMenu = () => {
+    if (showMenu) {
+      setIsMenuClosing(true);
+      window.setTimeout(() => {
+        setShowMenu(false);
+        setIsMenuClosing(false);
+      }, 180);
+      return;
+    }
+
+    setIsMenuClosing(false);
+    setShowMenu(true);
+  };
+
   const handleLogout = () => {
-    logoutUser();
-    router.push('/login');
+    setIsLoggingOut(true);
+    window.setTimeout(() => {
+      logoutUser();
+      router.push('/login');
+    }, 200);
   };
 
   const handlePhotoUpdated = (newPhotoUrl: string) => {
@@ -30,9 +49,9 @@ export default function UserProfile() {
 
   return (
     <>
-      <div className="relative">
+      <div className={`relative ${isLoggingOut ? 'animate-page-out' : ''}`}>
         <button
-          onClick={() => setShowMenu(!showMenu)}
+          onClick={handleToggleMenu}
           className="flex items-center gap-1 md:gap-2 hover:bg-surface-container transition-colors flex-shrink-0"
           style={{ borderRadius: '0' }}
         >
@@ -57,7 +76,7 @@ export default function UserProfile() {
         </button>
 
         {showMenu && (
-          <div className="absolute right-0 top-full mt-2 z-50 w-48 md:w-56 max-w-[calc(100vw-2rem)]">
+          <div className={`absolute right-0 top-full mt-2 z-50 w-48 md:w-56 max-w-[calc(100vw-2rem)] ${isMenuClosing ? 'animate-menu-out' : 'animate-menu-in'}`}>
             <PixelCard className="flex flex-col gap-2 w-full">
               <div className="flex items-center gap-2 p-2 border-b-[3px] border-on-surface">
                 {user.profile_image_url ? (

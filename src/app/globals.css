@@ -10,6 +10,10 @@ html, body {
   background: var(--background);
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 :root {
   /* Pixel Amore Design System Colors */
   --surface: #f9f9f9;
@@ -286,22 +290,77 @@ html {
 @keyframes modalPopIn {
   from { 
     opacity: 0; 
-    transform: scale(0.95) translateY(10px); 
+    transform: translateY(10px); 
   }
   to { 
     opacity: 1; 
-    transform: scale(1) translateY(0); 
+    transform: translateY(0); 
   }
 }
 
 @keyframes modalPopOut {
   from { 
     opacity: 1; 
-    transform: scale(1) translateY(0); 
+    transform: translateY(0); 
   }
   to { 
     opacity: 0; 
-    transform: scale(0.95) translateY(10px); 
+    transform: translateY(10px); 
+  }
+}
+
+@keyframes pageIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pageOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes menuIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes menuOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes loginIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -319,4 +378,24 @@ html {
 
 .animate-modal-out {
   animation: modalPopOut 0.2s ease-in forwards;
+}
+
+.animate-page-in {
+  animation: pageIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animate-page-out {
+  animation: pageOut 0.2s ease-in forwards;
+}
+
+.animate-menu-in {
+  animation: menuIn 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animate-menu-out {
+  animation: menuOut 0.18s ease-in forwards;
+}
+
+.animate-login-in {
+  animation: loginIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
