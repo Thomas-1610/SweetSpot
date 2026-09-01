@@ -46,8 +46,36 @@ export default function PhotoModal({ photo, onClose, onDelete }: PhotoModalProps
   };
 
   return (
-    <div className={`fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 ${isClosing ? 'animate-backdrop-out' : 'animate-backdrop-in'}`} onClick={handleClose}>
-      <div className={`relative max-w-4xl w-full max-h-[90vh] overflow-auto ${isClosing ? 'animate-modal-out' : 'animate-modal-in'}`} onClick={(e) => e.stopPropagation()}>
+    <div
+      className={`${isClosing ? 'animate-backdrop-out' : 'animate-backdrop-in'}`}
+      onClick={handleClose}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 200,
+        background: 'rgba(0, 0, 0, 0.8)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '12px',
+        width: '100vw',
+        height: '100dvh',
+        maxHeight: '100dvh',
+      }}
+    >
+      <div
+        className={`${isClosing ? 'animate-modal-out' : 'animate-modal-in'}`}
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: '64rem',
+          maxHeight: 'calc(100dvh - 24px)',
+          overflowY: 'auto',
+          overscrollBehavior: 'contain',
+          WebkitOverflowScrolling: 'touch',
+        }}
+      >
         <PixelCard className="flex flex-col gap-4">
           {/* Close button */}
           <button

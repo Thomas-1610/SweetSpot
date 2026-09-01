@@ -46,11 +46,35 @@ export default function MessageModal({ message, onClose, onDelete }: MessageModa
   };
 
   return (
-    <div className={`fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 ${isClosing ? 'animate-backdrop-out' : 'animate-backdrop-in'}`} onClick={handleClose}>
+    <div
+      className={`${isClosing ? 'animate-backdrop-out' : 'animate-backdrop-in'}`}
+      onClick={handleClose}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 200,
+        background: 'rgba(0, 0, 0, 0.8)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '12px',
+        width: '100vw',
+        height: '100dvh',
+        maxHeight: '100dvh',
+      }}
+    >
       <div 
-        className={`relative w-full max-w-2xl ${isClosing ? 'animate-modal-out' : 'animate-modal-in'}`} 
+        className={`${isClosing ? 'animate-modal-out' : 'animate-modal-in'}`} 
         onClick={(e) => e.stopPropagation()}
-        style={{ maxHeight: '90vh' }}
+        style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: '40rem',
+          maxHeight: 'calc(100dvh - 24px)',
+          overflowY: 'auto',
+          overscrollBehavior: 'contain',
+          WebkitOverflowScrolling: 'touch',
+        }}
       >
         <PixelCard className="flex flex-col gap-4">
           {/* Close button */}
