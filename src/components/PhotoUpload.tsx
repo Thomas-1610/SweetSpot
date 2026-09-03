@@ -4,6 +4,7 @@ import { useState } from 'react';
 import PixelButton from './PixelButton';
 import PixelCard from './PixelCard';
 import { uploadPhoto } from '@/lib/photos';
+import { categoryLabels } from '@/lib/categoryLabels';
 
 interface PhotoUploadProps {
   onUploadComplete?: () => void;
@@ -17,7 +18,7 @@ export default function PhotoUpload({ onUploadComplete, onClose }: PhotoUploadPr
   const [category, setCategory] = useState('');
   const [uploading, setUploading] = useState(false);
 
-  const categories = ['Viagem', 'Jantar', 'Fofura', 'Arcade', 'Celebration', 'Cozy'];
+  const categories = Object.keys(categoryLabels);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -102,8 +103,8 @@ export default function PhotoUpload({ onUploadComplete, onClose }: PhotoUploadPr
           style={{ borderRadius: '0' }}
         >
           <option value="">Selecione uma categoria</option>
-          {categories.map((cat) => (
-            <option key={cat} value={cat}>{cat}</option>
+          {categories.map((category) => (
+            <option key={category} value={category}>{categoryLabels[category]}</option>
           ))}
         </select>
       </div>

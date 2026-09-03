@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import PixelButton from './PixelButton';
 import PixelCard from './PixelCard';
 import { Photo } from '@/lib/supabase';
 import { deletePhoto } from '@/lib/photos';
+import { getCategoryLabel } from '@/lib/categoryLabels';
 
 interface PhotoModalProps {
   photo: Photo;
@@ -15,6 +17,16 @@ interface PhotoModalProps {
 export default function PhotoModal({ photo, onClose, onDelete }: PhotoModalProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setIsMounted(true));
+
+    return () => {
+      cancelAnimationFrame(frame);
+      setIsMounted(false);
+    };
+  }, []);
 
   const handleClose = () => {
     setIsClosing(true);
@@ -45,7 +57,11 @@ export default function PhotoModal({ photo, onClose, onDelete }: PhotoModalProps
     }
   };
 
-  return (
+  if (!isMounted) {
+    return null;
+  }
+
+  return createPortal(
     <div
       className={`${isClosing ? 'animate-backdrop-out' : 'animate-backdrop-in'}`}
       onClick={handleClose}
@@ -58,72 +74,74 @@ export default function PhotoModal({ photo, onClose, onDelete }: PhotoModalProps
         alignItems: 'center',
         justifyContent: 'center',
         padding: '12px',
-        width: '100vw',
-        height: '100dvh',
-        maxHeight: '100dvh',
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden',
+        boxSizing: 'border-box',
       }}
     >
       <div
-        className={`${isClosing ? 'animate-modal-out' : 'animate-modal-in'}`}
+        className={`${isClosing ? 'animate-modal-out' : 'animate-modal-in'} max-w-[26rem] md:max-w-[calc(100vw-48px)] lg:max-w-4xl`}
         onClick={(e) => e.stopPropagation()}
         style={{
           position: 'relative',
           width: '100%',
-          maxWidth: '64rem',
-          maxHeight: 'calc(100dvh - 24px)',
-          overflowY: 'auto',
-          overscrollBehavior: 'contain',
-          WebkitOverflowScrolling: 'touch',
         }}
       >
-        <PixelCard className="flex flex-col gap-4">
+        <PixelCard className="relative flex max-h-[calc(100dvh-24px)] flex-col gap-0 overflow-hidden md:h-[min(72dvh,38rem)] md:max-w-4xl md:flex-row">
           {/* Close button */}
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 z-10 bg-error text-on-error w-10 h-10 retro-border flex items-center justify-center hover:bg-error-container"
-            style={{ borderRadius: '0' }}
+            className="absolute right-2 top-2 z-10 flex items-center justify-center text-error transition-colors hover:text-error-container md:right-4 md:top-4"
           >
-            <span className="material-symbols-outlined">close</span>
+            <span className="material-symbols-outlined text-3xl">close</span>
           </button>
 
-          {/* Image */}
-          <div className="relative w-full">
-            <img
-              src={photo.image_url}
-              alt={photo.title}
-              className="w-full h-auto retro-border"
-              style={{ borderRadius: '0' }}
-            />
+          {/* Image area */}
+          <div
+            className="relative w-full shrink-0 md:w-[56%] md:max-w-[56%]"
+            style={{ aspectRatio: '6 / 5', overflow: 'hidden' }}
+          >
+            <div className="absolute inset-0">
+              <img
+                src={photo.image_url}
+                alt={photo.title}
+                className="absolute inset-0 block h-full w-full object-cover retro-border"
+                style={{ borderRadius: '0', imageRendering: 'auto' }}
+              />
+              <div className={`absolute bottom-2 right-2 ${getCategoryColor(photo.category)} font-label-sm retro-border px-2 py-1 uppercase`}>
+                {getCategoryLabel(photo.category)}
+              </div>
+            </div>
           </div>
 
           {/* Photo details */}
-          <div className="flex flex-col gap-4 p-4">
-            <div className="flex justify-between items-start border-b-[3px] border-on-surface pb-4">
-              <div>
-                <h2 className="font-headline-lg text-on-surface uppercase tracking-tighter mb-2" style={{ fontFamily: 'var(--font-pixel)' }}>
-                  {photo.title}
-                </h2>
-                <span className="font-label-sm text-on-surface-variant" style={{ fontFamily: 'var(--font-pixel)' }}>
-                  {photo.date}
-                </span>
+          <div className="flex min-h-0 flex-1 flex-col gap-4 p-4 md:justify-between md:p-6">
+            <div>
+              <div className="border-b-[3px] border-on-surface pb-3">
+                <div className="min-w-0">
+                  <h2 className="text-[18px] text-on-surface uppercase tracking-tighter md:text-xl" style={{ fontFamily: 'var(--font-pixel)', overflowWrap: 'anywhere' }}>
+                    {photo.title}
+                  </h2>
+                  <span className="text-[10px] text-on-surface-variant md:text-xs" style={{ fontFamily: 'var(--font-pixel)' }}>
+                    {photo.date}
+                  </span>
+                </div>
               </div>
-              <div className={`font-label-sm retro-border px-3 py-1 uppercase ${getCategoryColor(photo.category)}`}>
-                {photo.category}
-              </div>
+
+              <p className="mt-3 text-[12px] leading-tight text-on-surface md:text-sm" style={{ fontFamily: 'var(--font-pixel-body)', overflowWrap: 'anywhere' }}>
+                {photo.description}
+              </p>
             </div>
 
-            <p className="font-body-md text-on-surface" style={{ fontFamily: 'var(--font-pixel-body)' }}>
-              {photo.description}
-            </p>
-
             {/* Delete button */}
-            <div className="flex justify-end mt-4">
+            <div className="flex justify-end pt-2">
               <PixelButton
                 variant="outline"
-                size="md"
+                size="sm"
                 onClick={handleDelete}
                 disabled={isDeleting}
-                className="border-error text-error hover:bg-error hover:text-on-error"
+                className="border-error text-[10px] text-error hover:bg-error hover:text-on-error md:text-xs"
               >
                 <span className="material-symbols-outlined">delete</span>
                 <span>{isDeleting ? 'Excluindo...' : 'Excluir Foto'}</span>
@@ -132,7 +150,8 @@ export default function PhotoModal({ photo, onClose, onDelete }: PhotoModalProps
           </div>
         </PixelCard>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

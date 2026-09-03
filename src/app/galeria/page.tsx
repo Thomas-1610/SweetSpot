@@ -8,6 +8,7 @@ import PhotoModal from '@/components/PhotoModal';
 import { getPhotos } from '@/lib/photos';
 import { Photo } from '@/lib/supabase';
 import { getCurrentUser, User } from '@/lib/auth';
+import { getCategoryLabel } from '@/lib/categoryLabels';
 
 export default function Galeria() {
   const router = useRouter();
@@ -122,14 +123,17 @@ export default function Galeria() {
                 <p className="font-body-md text-on-surface-variant" style={{ fontFamily: 'var(--font-pixel-body)' }}>Nenhuma foto ainda. Adicione sua primeira memória!</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              <div className="columns-1 md:columns-2 lg:columns-3 gap-6 md:gap-8">
                 {photos.map((photo) => (
                   <div 
                     key={photo.id} 
-                    className="hover:-translate-y-2 hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] transition-transform duration-200 cursor-pointer"
+                    className="mb-6 md:mb-8 break-inside-avoid cursor-pointer"
                     onClick={() => setSelectedPhoto(photo)}
                   >
-                    <PixelCard className="flex flex-col gap-4">
+                    <PixelCard hover className="flex flex-col gap-4">
+                      <div className="flex justify-end border-b-[3px] border-on-surface pb-1">
+                        <span className="font-label-sm text-on-surface-variant" style={{ fontFamily: 'var(--font-pixel)' }}>{photo.date}</span>
+                      </div>
                       <div className="relative w-full aspect-square retro-border">
                         <img 
                           className="w-full h-full object-cover" 
@@ -137,13 +141,12 @@ export default function Galeria() {
                           src={photo.image_url}
                         />
                         <div className={`absolute bottom-2 right-2 ${getCategoryColor(photo.category)} font-label-sm retro-border px-2 py-1 uppercase`}>
-                          {photo.category}
+                          {getCategoryLabel(photo.category)}
                         </div>
                       </div>
                       <div>
-                        <div className="flex justify-between items-center border-b-[3px] border-on-surface pb-2 mb-2 gap-2">
-                          <span className="font-headline-sm tracking-tighter truncate max-w-[65%]" style={{ fontFamily: 'var(--font-pixel)' }} title={photo.title}>{photo.title}</span>
-                          <span className="font-label-sm text-on-surface-variant flex-shrink-0" style={{ fontFamily: 'var(--font-pixel)' }}>{photo.date}</span>
+                        <div className="border-b-[3px] border-on-surface pb-2 mb-2">
+                          <span className="font-headline-sm tracking-tighter truncate block" style={{ fontFamily: 'var(--font-pixel)' }} title={photo.title}>{photo.title}</span>
                         </div>
                         <p className="font-body-md text-on-surface line-clamp-2" style={{ fontFamily: 'var(--font-pixel-body)' }}>{photo.description}</p>
                       </div>

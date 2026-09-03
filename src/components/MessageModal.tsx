@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import PixelButton from './PixelButton';
 import PixelCard from './PixelCard';
 import { Message } from '@/lib/supabase';
@@ -15,6 +16,13 @@ interface MessageModalProps {
 export default function MessageModal({ message, onClose, onDelete }: MessageModalProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+
+    return () => setIsMounted(false);
+  }, []);
 
   const handleClose = () => {
     setIsClosing(true);
@@ -45,7 +53,11 @@ export default function MessageModal({ message, onClose, onDelete }: MessageModa
     }
   };
 
-  return (
+  if (!isMounted) {
+    return null;
+  }
+
+  return createPortal(
     <div
       className={`${isClosing ? 'animate-backdrop-out' : 'animate-backdrop-in'}`}
       onClick={handleClose}
@@ -58,9 +70,10 @@ export default function MessageModal({ message, onClose, onDelete }: MessageModa
         alignItems: 'center',
         justifyContent: 'center',
         padding: '12px',
-        width: '100vw',
-        height: '100dvh',
-        maxHeight: '100dvh',
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden',
+        boxSizing: 'border-box',
       }}
     >
       <div 
@@ -70,7 +83,7 @@ export default function MessageModal({ message, onClose, onDelete }: MessageModa
           position: 'relative',
           width: '100%',
           maxWidth: '40rem',
-          maxHeight: 'calc(100dvh - 24px)',
+          maxHeight: '100%',
           overflowY: 'auto',
           overscrollBehavior: 'contain',
           WebkitOverflowScrolling: 'touch',
@@ -85,8 +98,8 @@ export default function MessageModal({ message, onClose, onDelete }: MessageModa
             <span className="material-symbols-outlined text-3xl">close</span>
           </button>
 
-          {/* Message content - no scroll */}
-          <div className="flex flex-col gap-4 p-4 mt-2" style={{ maxHeight: 'calc(90vh - 80px)', overflow: 'hidden' }}>
+          {/* Message content */}
+          <div className="flex flex-col gap-4 p-4 mt-2">
             <div className="flex justify-between items-start border-b-[3px] border-on-surface pb-4">
               <div>
                 <h2 className={`font-headline-lg uppercase tracking-tighter mb-2 ${message.sender === 'Você' ? 'text-primary' : 'text-secondary'}`} style={{ fontFamily: 'var(--font-pixel)' }}>
@@ -124,6 +137,7 @@ export default function MessageModal({ message, onClose, onDelete }: MessageModa
           </div>
         </PixelCard>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
