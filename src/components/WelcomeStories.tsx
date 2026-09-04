@@ -41,6 +41,7 @@ export default function WelcomeStories() {
     return user ? !window.localStorage.getItem(getSeenKey(user.username)) : false;
   });
   const [storyIndex, setStoryIndex] = useState(0);
+  const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
     if (!isVisible) return;
@@ -56,10 +57,12 @@ export default function WelcomeStories() {
   const finish = () => {
     const user = getCurrentUser();
     if (user) window.localStorage.setItem(getSeenKey(user.username), 'true');
-    setIsVisible(false);
+    setIsClosing(true);
+    window.setTimeout(() => setIsVisible(false), 200);
   };
 
   const goToStory = (direction: 'next' | 'previous') => {
+    if (isClosing) return;
     setStoryIndex((currentIndex) => {
       if (direction === 'next') return Math.min(currentIndex + 1, stories.length - 1);
       return Math.max(currentIndex - 1, 0);
@@ -73,12 +76,12 @@ export default function WelcomeStories() {
   const storyTextColor = storyIndex === 0 || storyIndex === 2 ? 'text-white' : 'text-on-surface';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/80 p-4 animate-backdrop-in">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-on-surface/80 p-4 ${isClosing ? 'animate-backdrop-out' : 'animate-backdrop-in'}`}>
       <section
-        className="relative flex h-[92vh] w-full max-w-lg flex-col overflow-hidden bg-surface retro-border retro-shadow-lg animate-modal-in"
+        className={`relative flex h-[92vh] w-full max-w-lg flex-col overflow-hidden bg-surface retro-border retro-shadow-lg ${isClosing ? 'animate-welcome-out' : 'animate-welcome-in'}`}
         aria-label="Boas-vindas ao SweetSpot"
       >
-        <div className={`flex flex-1 flex-col justify-between p-6 sm:p-10 ${story.accent}`}>
+        <div key={storyIndex} className={`flex flex-1 flex-col justify-between p-6 sm:p-10 animate-story-change ${story.accent}`}>
           <div className="flex items-center justify-between gap-4">
             <span className={`font-label-sm uppercase ${storyTextColor}`}>SweetSpot</span>
             <button

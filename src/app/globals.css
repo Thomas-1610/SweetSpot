@@ -364,6 +364,39 @@ html {
   }
 }
 
+@keyframes storyChange {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes welcomeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes welcomeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
 .animate-backdrop-in {
   animation: backdropFadeIn 0.2s ease-out forwards;
 }
@@ -378,6 +411,18 @@ html {
 
 .animate-modal-out {
   animation: modalPopOut 0.2s ease-in forwards;
+}
+
+.animate-story-change {
+  animation: storyChange 0.18s ease-out both;
+}
+
+.animate-welcome-in {
+  animation: welcomeIn 0.2s ease-out both;
+}
+
+.animate-welcome-out {
+  animation: welcomeOut 0.18s ease-in both;
 }
 
 .animate-page-in {

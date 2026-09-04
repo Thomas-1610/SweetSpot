@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useSyncExternalStore } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import PixelCard from '@/components/PixelCard';
 import PhotoUpload from '@/components/PhotoUpload';
@@ -10,6 +11,14 @@ import { Photo } from '@/lib/supabase';
 import { getCurrentUser, User } from '@/lib/auth';
 import { getCategoryLabel } from '@/lib/categoryLabels';
 
+const subscribeToClient = (callback: () => void) => {
+  const timer = window.setTimeout(callback, 0);
+  return () => window.clearTimeout(timer);
+};
+
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
+
 export default function Galeria() {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -17,6 +26,7 @@ export default function Galeria() {
   const [showUpload, setShowUpload] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
+  const isMounted = useSyncExternalStore(subscribeToClient, getClientSnapshot, getServerSnapshot);
 
   useEffect(() => {
     const user = getCurrentUser();
@@ -157,15 +167,6 @@ export default function Galeria() {
             )}
           </div>
 
-          {/* Floating Action Button - Mobile Only */}
-          <button 
-            className="md:hidden fixed bottom-[88px] right-6 w-16 h-16 bg-primary text-on-primary retro-border retro-shadow active-press flex items-center justify-center z-40 transition-transform hover:-translate-y-0.5"
-            onClick={() => setShowUpload(!showUpload)}
-            style={{ borderRadius: '0' }}
-          >
-            <span className="material-symbols-outlined text-[32px]">add_photo_alternate</span>
-          </button>
-
           {/* Desktop Upload Button */}
           <div className="hidden md:flex justify-center mt-12">
             <button 
@@ -187,6 +188,23 @@ export default function Galeria() {
           onClose={() => setSelectedPhoto(null)}
           onDelete={handleDeletePhoto}
         />
+      )}
+
+      {isMounted && createPortal(
+        <button
+          className="md:hidden fixed right-6 z-[110] flex h-16 w-16 items-center justify-center bg-primary text-on-primary retro-border retro-shadow active-press transition-transform hover:-translate-y-0.5"
+          onClick={() => setShowUpload(!showUpload)}
+          style={{
+            borderRadius: '0',
+            position: 'fixed',
+            right: '1.5rem',
+            bottom: 'calc(4rem + 1rem + env(safe-area-inset-bottom, 0px))',
+          }}
+          aria-label="Adicionar nova foto"
+        >
+          <span className="material-symbols-outlined text-[32px]">add_photo_alternate</span>
+        </button>,
+        document.body,
       )}
     </div>
   );
