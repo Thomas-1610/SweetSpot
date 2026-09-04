@@ -10,6 +10,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/': 'Home',
   '/galeria': 'Galeria',
   '/mensagens': 'Mensagens',
+  '/quer-saber': 'Quer saber?',
 };
 
 export default function AppChrome({ children }: { children: React.ReactNode }) {

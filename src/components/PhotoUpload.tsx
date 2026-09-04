@@ -125,29 +125,23 @@ export default function PhotoUpload({ onUploadComplete, onClose }: PhotoUploadPr
       <div className="flex flex-col md:flex-row gap-2">
         <PixelButton 
           variant="primary" 
+          size="md"
           onClick={handleUpload}
           disabled={uploading}
-          className="flex-1 flex items-center justify-center gap-2 h-14"
-          style={{ boxShadow: '2px 2px 0px 0px rgba(0,0,0,1)' }}
+          className="flex items-center justify-center gap-2 w-full sm:flex-1"
         >
           <span className="material-symbols-outlined">upload</span>
           <span>{uploading ? 'Enviando...' : 'Enviar'}</span>
         </PixelButton>
         <PixelButton 
           variant="outline" 
+          size="md"
           onClick={onClose}
           disabled={uploading}
-          className="flex-1 flex items-center justify-center gap-2 h-14"
-          style={{ boxShadow: '2px 2px 0px 0px rgba(0,0,0,1)' }}
+          className="w-full sm:flex-1"
         >
           <span>Cancelar</span>
         </PixelButton>
-      </div>
-      
-      <div className="mt-2 p-2 bg-secondary-container text-on-secondary-container retro-border">
-        <p className="font-body-sm text-center" style={{ fontFamily: 'var(--font-pixel-body)' }}>
-          💡 Configure o Supabase para habilitar o upload real de fotos
-        </p>
       </div>
     </PixelCard>
   );

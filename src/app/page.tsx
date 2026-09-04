@@ -59,14 +59,14 @@ export default function Home() {
               </PixelButton>
             </Link>
             
-            <Link href="/mensagens" className="flex-1">
+            <Link href="/quer-saber" className="flex-1">
               <PixelButton 
                 variant="secondary" 
                 size="lg"
-                className="flex items-center justify-center gap-2 w-full h-16 md:h-20"
+                className="flex items-center justify-center gap-2 w-full h-16 md:h-20 text-black"
               >
                 <span className="material-symbols-outlined">auto_stories</span>
-                <span>Nossos Momentos</span>
+                <span>Quer saber?</span>
               </PixelButton>
             </Link>
           </div>

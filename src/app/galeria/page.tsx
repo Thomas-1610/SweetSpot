@@ -84,6 +84,20 @@ export default function Galeria() {
     setSelectedPhoto(null);
   };
 
+  const handleUploadToggle = () => {
+    const shouldOpen = !showUpload;
+    setShowUpload(shouldOpen);
+
+    if (shouldOpen) {
+      window.requestAnimationFrame(() => {
+        document.getElementById('photo-upload-form')?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      });
+    }
+  };
+
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
       'Arcade Date': 'bg-secondary-container text-on-secondary-container',
@@ -103,7 +117,7 @@ export default function Galeria() {
       <main className="md:pt-20 pt-16 min-h-screen bg-surface overflow-x-hidden">
         <div className="flex flex-col w-full max-w-7xl mx-auto pb-32 md:pb-12">
           {showUpload && (
-            <div className="px-4 md:px-6 py-6">
+            <div id="photo-upload-form" className="scroll-mt-20 px-4 md:px-6 py-6">
               <PhotoUpload 
                 onUploadComplete={() => {
                   loadPhotos();
@@ -171,7 +185,7 @@ export default function Galeria() {
           <div className="hidden md:flex justify-center mt-12">
             <button 
               className="bg-tertiary text-on-tertiary px-12 py-6 retro-border retro-shadow-lg active-press flex items-center gap-4 transition-transform hover:-translate-y-1"
-              onClick={() => setShowUpload(!showUpload)}
+              onClick={handleUploadToggle}
               style={{ borderRadius: '0' }}
             >
               <span className="material-symbols-outlined text-[32px]">add_box</span>
@@ -193,7 +207,7 @@ export default function Galeria() {
       {isMounted && createPortal(
         <button
           className="md:hidden fixed right-6 z-[110] flex h-16 w-16 items-center justify-center bg-primary text-on-primary retro-border retro-shadow active-press transition-transform hover:-translate-y-0.5"
-          onClick={() => setShowUpload(!showUpload)}
+          onClick={handleUploadToggle}
           style={{
             borderRadius: '0',
             position: 'fixed',
