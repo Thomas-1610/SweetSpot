@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Header from './Header';
 import Navigation from './Navigation';
+import WelcomeStories from './WelcomeStories';
 
 const PAGE_TITLES: Record<string, string> = {
   '/': 'Home',
@@ -43,6 +44,7 @@ export default function AppChrome({ children }: { children: React.ReactNode }) {
       <div className="animate-page-in">
         {children}
       </div>
+      <WelcomeStories />
     </div>
   );
 }

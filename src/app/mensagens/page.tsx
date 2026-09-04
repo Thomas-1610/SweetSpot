@@ -243,7 +243,7 @@ export default function Mensagens() {
                 {/* Multi-select toggle button */}
                 <button
                   onClick={toggleMultiSelectMode}
-                  className={`w-8 h-8 flex items-center justify-center transition-colors ${isMultiSelectMode ? 'bg-primary text-on-primary retro-border' : 'bg-surface-container text-on-surface'}`}
+                  className={`w-8 h-8 flex items-center justify-center transition-colors ${isMultiSelectMode ? 'bg-primary text-on-primary retro-border' : 'bg-transparent text-on-surface'}`}
                   style={{ borderRadius: '0' }}
                   title={isMultiSelectMode ? 'Sair do modo seleção' : 'Selecionar múltiplas'}
                 >
@@ -291,7 +291,7 @@ export default function Mensagens() {
                       )}
                       
                       <div className="flex justify-between items-center border-b-[3px] border-on-surface pb-2 mb-2">
-                        <span className={`font-label-sm uppercase ${message.sender === 'Você' ? 'text-primary' : 'text-secondary'}`}>
+                        <span className={`font-label-sm uppercase ${message.sender === 'Você' ? 'text-primary' : 'text-primary'}`}>
                           {message.sender}
                         </span>
                         <span className="font-label-sm text-on-surface-variant">{message.timestamp}</span>
