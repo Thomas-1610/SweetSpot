@@ -139,7 +139,7 @@ export default function Mensagens() {
               Nossas Mensagens
             </h1>
             <p className="font-body-lg text-on-surface-variant max-w-2xl" style={{ fontFamily: 'var(--font-pixel-body)' }}>
-              Aqui voce pode deixar mensagens, todo tipo de mensagem que quiser :)
+              Aqui voce pode deixar mensagens, todo tipo de mensagem que quiser. :)
             </p>
           </div>
 
