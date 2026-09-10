@@ -1,46 +1,25 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import LoginForm from '@/components/LoginForm';
-import { getCurrentUser, User } from '@/lib/auth';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const currentUser = useCurrentUser();
 
   useEffect(() => {
-    setMounted(true);
-    setIsAnimating(true);
-    
-    // Prevent scroll during animation
-    document.body.style.overflow = 'hidden';
-    
-    // Verificar se já está logado
-    const currentUser = getCurrentUser();
     if (currentUser) {
-      router.push('/');
-      return;
+      router.replace('/');
     }
-    
-    // Enable scrolling after animation completes
-    const timer = setTimeout(() => {
-      setIsAnimating(false);
-      document.body.style.overflow = '';
-    }, 350);
-    
-    return () => {
-      clearTimeout(timer);
-      document.body.style.overflow = '';
-    };
-  }, [router]);
+  }, [currentUser, router]);
 
-  const handleLoginSuccess = (user: User) => {
+  const handleLoginSuccess = () => {
     router.push('/');
   };
 
-  if (!mounted) {
+  if (currentUser) {
     return null;
   }
 

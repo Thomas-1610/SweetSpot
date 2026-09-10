@@ -8,7 +8,7 @@ import PhotoUpload from '@/components/PhotoUpload';
 import PhotoModal from '@/components/PhotoModal';
 import { getPhotos } from '@/lib/photos';
 import { Photo } from '@/lib/supabase';
-import { getCurrentUser, User } from '@/lib/auth';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { getCategoryLabel } from '@/lib/categoryLabels';
 
 const subscribeToClient = (callback: () => void) => {
@@ -21,24 +21,22 @@ const getServerSnapshot = () => false;
 
 export default function Galeria() {
   const router = useRouter();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [showUpload, setShowUpload] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   const isMounted = useSyncExternalStore(subscribeToClient, getClientSnapshot, getServerSnapshot);
+  const currentUser = useCurrentUser();
 
   useEffect(() => {
-    const user = getCurrentUser();
-    if (!user) {
-      router.push('/login');
+    if (!currentUser) {
+      router.replace('/login');
       return;
     }
-    setCurrentUser(user);
     loadPhotos();
-  }, [router]);
+  }, [currentUser, router]);
 
-  const loadPhotos = async () => {
+  async function loadPhotos() {
     try {
       const data = await getPhotos();
       setPhotos(data);
@@ -77,7 +75,7 @@ export default function Galeria() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   const handleDeletePhoto = () => {
     loadPhotos();
@@ -163,6 +161,8 @@ export default function Galeria() {
                           className="w-full h-full object-cover" 
                           alt={photo.title}
                           src={photo.image_url}
+                          loading="lazy"
+                          decoding="async"
                         />
                         <div className={`absolute bottom-2 right-2 ${getCategoryColor(photo.category)} font-label-sm retro-border px-2 py-1 uppercase`}>
                           {getCategoryLabel(photo.category)}

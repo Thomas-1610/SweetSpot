@@ -1,27 +1,19 @@
 'use client';
 
-import { useEffect, useSyncExternalStore } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import PixelCard from '@/components/PixelCard';
-import { getCurrentUser } from '@/lib/auth';
-
-const subscribeToClient = (callback: () => void) => {
-  const timer = window.setTimeout(callback, 0);
-  return () => window.clearTimeout(timer);
-};
-
-const getClientSnapshot = () => true;
-const getServerSnapshot = () => false;
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 export default function QuerSaberPage() {
   const router = useRouter();
-  const mounted = useSyncExternalStore(subscribeToClient, getClientSnapshot, getServerSnapshot);
+  const currentUser = useCurrentUser();
 
   useEffect(() => {
-    if (!getCurrentUser()) router.push('/login');
-  }, [router]);
+    if (!currentUser) router.replace('/login');
+  }, [currentUser, router]);
 
-  if (!mounted || !getCurrentUser()) return null;
+  if (!currentUser) return null;
 
   return (
     <div className="min-h-screen bg-surface">

@@ -19,35 +19,38 @@ export default function MusicaDoDia() {
   const [processing, setProcessing] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const loadPlaylist = async () => {
+  const loadPlaylist = async (): Promise<Video[]> => {
     setLoading(true);
-    const playlistVideos = await getPlaylistVideos();
-    setVideos(playlistVideos);
-    setLoading(false);
+    try {
+      const playlistVideos = await getPlaylistVideos();
+      setVideos(playlistVideos);
+      return playlistVideos;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handlePlayClick = async () => {
     if (processing || loading) return;
     
     setProcessing(true);
-    
-    if (videos.length === 0) {
-      await loadPlaylist();
-    }
-    
-    // Se já tiver vídeos, pega um aleatório (ou continua tocando o atual se já estava)
-    if (videos.length > 0) {
-      if (!currentVideo) {
-        const randomVideo = getRandomVideo(videos);
-        if (randomVideo) {
-          setCurrentVideo(randomVideo);
+    try {
+      // State updates are asynchronous. Keep the fetched list locally so the
+      // very first tap can start playback instead of requiring a second tap.
+      const availableVideos = videos.length > 0 ? videos : await loadPlaylist();
+      
+      // Se já tiver vídeos, pega um aleatório (ou continua tocando o atual se já estava)
+      if (availableVideos.length > 0) {
+        const videoToPlay = currentVideo ?? getRandomVideo(availableVideos);
+        if (videoToPlay) {
+          setCurrentVideo(videoToPlay);
         }
+        setIsPlaying(true);
+        setIsPaused(false);
       }
-      setIsPlaying(true);
-      setIsPaused(false);
+    } finally {
+      setProcessing(false);
     }
-    
-    setProcessing(false);
   };
 
   const handlePause = () => {

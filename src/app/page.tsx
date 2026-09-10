@@ -1,29 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import PixelButton from '@/components/PixelButton';
-import PixelCard from '@/components/PixelCard';
 import Link from 'next/link';
 import MusicaDoDia from '@/components/MusicaDoDia';
-import { getCurrentUser, User } from '@/lib/auth';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 export default function Home() {
   const router = useRouter();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [mounted, setMounted] = useState(false);
+  const currentUser = useCurrentUser();
 
   useEffect(() => {
-    setMounted(true);
-    const user = getCurrentUser();
-    if (!user) {
-      router.push('/login');
-      return;
-    }
-    setCurrentUser(user);
-  }, [router]);
+    if (!currentUser) router.replace('/login');
+  }, [currentUser, router]);
 
-  if (!mounted || !currentUser) {
+  if (!currentUser) {
     return null;
   }
 

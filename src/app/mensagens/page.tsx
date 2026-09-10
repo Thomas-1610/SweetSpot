@@ -8,11 +8,11 @@ import PixelCard from '@/components/PixelCard';
 import MessageModal from '@/components/MessageModal';
 import { getMessages, sendMessage, deleteMessage } from '@/lib/messages';
 import { Message } from '@/lib/supabase';
-import { getCurrentUser, User } from '@/lib/auth';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 export default function Mensagens() {
   const router = useRouter();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const currentUser = useCurrentUser();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [showCompose, setShowCompose] = useState(false);
@@ -22,16 +22,14 @@ export default function Mensagens() {
   const [selectedMessageIds, setSelectedMessageIds] = useState<string[]>([]);
 
   useEffect(() => {
-    const user = getCurrentUser();
-    if (!user) {
-      router.push('/login');
+    if (!currentUser) {
+      router.replace('/login');
       return;
     }
-    setCurrentUser(user);
     loadMessages();
-  }, [router]);
+  }, [currentUser, router]);
 
-  const loadMessages = async () => {
+  async function loadMessages() {
     try {
       const data = await getMessages();
       setMessages(data);
@@ -59,7 +57,7 @@ export default function Mensagens() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   const handleDeleteMessage = () => {
     loadMessages();
