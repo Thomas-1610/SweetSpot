@@ -30,12 +30,24 @@ export async function getPlaylistVideos(): Promise<Video[]> {
       return [];
     }
 
-    return data.items.map((item: any) => ({
-      id: item.snippet.resourceId.videoId,
-      title: item.snippet.title,
-      artist: item.snippet.channelTitle,
-      thumbnail: item.snippet.thumbnails?.medium?.url || item.snippet.thumbnails?.default?.url || '',
-    }));
+    return data.items.map((item: any) => {
+      const title = item.snippet.title;
+      // Tenta extrair o artista do título (formato comum: "Artista - Nome da Música")
+      let artist = item.snippet.channelTitle;
+      if (title.includes(' - ')) {
+        const parts = title.split(' - ');
+        if (parts.length >= 2) {
+          artist = parts[0].trim();
+        }
+      }
+      
+      return {
+        id: item.snippet.resourceId.videoId,
+        title: title.includes(' - ') ? title.split(' - ').slice(1).join(' - ').trim() : title,
+        artist: artist,
+        thumbnail: item.snippet.thumbnails?.medium?.url || item.snippet.thumbnails?.default?.url || '',
+      };
+    });
   } catch (error) {
     console.error('Erro ao buscar vídeos da playlist:', error);
     return [];

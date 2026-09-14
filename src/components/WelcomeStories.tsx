@@ -7,21 +7,21 @@ const STORY_SEEN_PREFIX = 'sweetspot-welcome-seen:';
 
 const stories = [
   {
-    eyebrow: 'story 01',
+    eyebrow: '01',
     title: 'Oii, Esteer!',
     text: 'Tudo bem? Fiz isso pra tu ter um lugar pra dizer as coisas, tanto as boas quanto as ruins.',
     icon: 'favorite',
     accent: 'bg-primary-container',
   },
   {
-    eyebrow: 'story 02',
-    title: 'Nosso cantinho',
+    eyebrow: '02',
+    title: 'Você pode dizer tudo',
     text: 'Aqui a gente tem mensagens e uma galeria de fotos. Tu pode adicionar fotos e mensagens pra mim. E, se não quiser dizer algo diretamente, pode usar o sistema de mensagens.',
-    icon: 'photo_library',
+    icon: 'favorite',
     accent: 'bg-secondary-container',
   },
   {
-    eyebrow: 'story 03',
+    eyebrow: '03',
     title: 'E é isso!',
     text: 'Esse foi o último presente pra você. Feliz aniversário!!',
     icon: 'celebration',
@@ -34,14 +34,16 @@ function getSeenKey(username: string) {
 }
 
 export default function WelcomeStories() {
-  const [isVisible, setIsVisible] = useState(() => {
-    if (typeof window === 'undefined') return false;
-
-    const user = getCurrentUser();
-    return user ? !window.localStorage.getItem(getSeenKey(user.username)) : false;
-  });
+  const [isVisible, setIsVisible] = useState(false);
   const [storyIndex, setStoryIndex] = useState(0);
   const [isClosing, setIsClosing] = useState(false);
+
+  useEffect(() => {
+    const user = getCurrentUser();
+    if (user && !window.localStorage.getItem(getSeenKey(user.username))) {
+      setIsVisible(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (!isVisible) return;
@@ -78,10 +80,10 @@ export default function WelcomeStories() {
   return (
     <div className={`fixed inset-0 z-50 flex items-center justify-center bg-on-surface/80 p-4 ${isClosing ? 'animate-backdrop-out' : 'animate-backdrop-in'}`}>
       <section
-        className={`relative flex h-[92vh] w-full max-w-lg flex-col overflow-hidden bg-surface retro-border retro-shadow-lg ${isClosing ? 'animate-welcome-out' : 'animate-welcome-in'}`}
+        className={`relative flex h-[75vh] sm:h-[85vh] md:h-[92vh] w-full max-w-lg flex-col overflow-hidden bg-surface retro-border retro-shadow-lg ${isClosing ? 'animate-welcome-out' : 'animate-welcome-in'}`}
         aria-label="Boas-vindas ao SweetSpot"
       >
-        <div key={storyIndex} className={`flex flex-1 flex-col justify-between p-6 sm:p-10 animate-story-change ${story.accent}`}>
+        <div key={storyIndex} className={`flex flex-1 flex-col justify-between p-4 sm:p-6 md:p-10 animate-story-change ${story.accent}`}>
           <div className="flex items-center justify-between gap-4">
             <span className={`font-label-sm uppercase ${storyTextColor}`}>SweetSpot</span>
             <button
@@ -93,25 +95,25 @@ export default function WelcomeStories() {
             </button>
           </div>
 
-          <div className="flex flex-col items-center gap-7 py-12 text-center">
+          <div className="flex flex-col items-center gap-4 sm:gap-7 py-6 sm:py-12 text-center">
             {storyIndex === 0 && (
-              <div className="flex h-24 w-24 items-center justify-center bg-surface retro-border retro-shadow">
-                <span className="material-symbols-outlined text-[52px] text-primary" style={{ fontVariationSettings: '"FILL" 1' }}>
+              <div className="flex h-16 w-16 sm:h-24 sm:w-24 items-center justify-center bg-surface retro-border retro-shadow">
+                <span className="material-symbols-outlined text-[36px] sm:text-[52px] text-primary" style={{ fontVariationSettings: '"FILL" 1' }}>
                   {story.icon}
                 </span>
               </div>
             )}
             {storyIndex > 0 && (
-              <span className="material-symbols-outlined text-[52px] text-primary" style={{ fontVariationSettings: '"FILL" 1' }}>
+              <span className="material-symbols-outlined text-[36px] sm:text-[52px] text-primary" style={{ fontVariationSettings: '"FILL" 1' }}>
                 {story.icon}
               </span>
             )}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3 sm:gap-4">
               <p className={`font-label-sm uppercase tracking-widest ${storyTextColor}`}>{story.eyebrow}</p>
               <h2 className={`font-headline-md uppercase ${storyTextColor}`} style={{ fontFamily: 'var(--font-pixel)' }}>
                 {story.title}
               </h2>
-              <p className={`font-body-lg ${storyTextColor}`} style={{ fontFamily: 'var(--font-pixel-body)' }}>
+              <p className={`font-body-base sm:font-body-lg ${storyTextColor}`} style={{ fontFamily: 'var(--font-pixel-body)' }}>
                 {story.text}
               </p>
             </div>
@@ -122,7 +124,7 @@ export default function WelcomeStories() {
               type="button"
               onClick={() => goToStory('previous')}
               disabled={storyIndex === 0}
-              className={`flex h-11 w-11 items-center justify-center ${storyTextColor} disabled:invisible`}
+              className={`flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center ${storyTextColor} disabled:invisible`}
               aria-label="Story anterior"
             >
               <span className="material-symbols-outlined">arrow_back</span>
@@ -130,7 +132,7 @@ export default function WelcomeStories() {
             <button
               type="button"
               onClick={() => isLastStory ? finish() : goToStory('next')}
-              className="flex h-11 items-center gap-2 bg-primary px-4 font-label-sm uppercase text-on-primary retro-border"
+              className="flex h-10 sm:h-11 items-center gap-2 bg-primary px-3 sm:px-4 font-label-sm uppercase text-on-primary retro-border"
             >
               <span>{isLastStory ? 'Começar' : 'Próximo'}</span>
               <span className="material-symbols-outlined text-base">arrow_forward</span>
@@ -138,7 +140,7 @@ export default function WelcomeStories() {
           </div>
         </div>
 
-        <div className="flex gap-2 bg-surface px-6 py-5 sm:px-10" aria-label="Progresso dos stories">
+        <div className="flex gap-2 bg-surface px-4 sm:px-6 py-4 sm:py-5 md:px-10" aria-label="Progresso dos stories">
           {stories.map((currentStory, index) => (
             <button
               key={currentStory.eyebrow}

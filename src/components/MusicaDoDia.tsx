@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { getPlaylistVideos, getRandomVideo } from '@/lib/youtubeApi';
 
 interface Video {
@@ -18,6 +18,11 @@ export default function MusicaDoDia() {
   const [loading, setLoading] = useState(false);
   const [processing, setProcessing] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // Debug: log currentVideo quando muda
+  useEffect(() => {
+    console.log('currentVideo atualizado:', currentVideo);
+  }, [currentVideo]);
 
   const loadPlaylist = async (): Promise<Video[]> => {
     setLoading(true);
@@ -73,12 +78,11 @@ export default function MusicaDoDia() {
 
   return (
     <div className="w-full overflow-hidden">
-      <div className="bg-surface retro-border retro-shadow-lg p-4 flex flex-col gap-4">
-        {/* Header */}
+<div className="bg-surface retro-border retro-shadow-lg p-4 flex flex-col gap-4 text-sm">        {/* Header */}
         <div className="flex flex-col gap-2">
           <h3 className="font-headline-sm text-on-surface uppercase tracking-widest flex items-center gap-2">
             <span className="material-symbols-outlined text-lg">music_note</span>
-            Música do Dia
+            {currentVideo ? currentVideo.title : 'SweetSpot'}
           </h3>
           <div className="h-[3px] w-full bg-[var(--border-black)]"></div>
         </div>
@@ -88,9 +92,6 @@ export default function MusicaDoDia() {
           {/* Song Info */}
           <div className="flex flex-col overflow-hidden whitespace-nowrap pr-4">
             <span className="font-headline-md text-on-surface truncate">
-              {currentVideo ? currentVideo.title : 'SweetSpot'}
-            </span>
-            <span className="font-label-lg text-on-surface-variant truncate mt-1">
               {currentVideo ? currentVideo.artist : 'Toque para iniciar'}
             </span>
           </div>

@@ -19,7 +19,10 @@ const vt323 = VT323({
 
 export const metadata: Metadata = {
   title: "SweetSpot - Nosso Cantinho",
-  description: "Um espaço digital compartilhado para nós dois, feito com amor e pixels.",
+  description: "Um espaço digital compartilhado para nós dois, feito com pixels.",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -29,6 +32,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${pressStart2P.variable} ${vt323.variable} h-full`}
     >
       <head>
+        <link rel="icon" href="/favicon.png" type="image/png" />
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
