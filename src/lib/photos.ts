@@ -1,7 +1,7 @@
 import { supabase, Photo } from './supabase';
 
 // Função para comprimir imagem no lado do cliente
-export async function compressImage(file: File, maxWidth: number = 600, quality: number = 0.96): Promise<File> {
+export async function compressImage(file: File, maxWidth: number = 600, quality: number = 0.95): Promise<File> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const canvas = document.createElement('canvas');
@@ -79,7 +79,7 @@ export async function uploadPhoto(file: File, title: string, description: string
   }
 
   // Comprime a imagem antes de fazer upload
-  const compressedFile = await compressImage(file, 400, 0.7);
+  const compressedFile = await compressImage(file);
 
   // Upload da imagem comprimida para Supabase Storage
   const fileName = `${Date.now()}-${compressedFile.name}`;
