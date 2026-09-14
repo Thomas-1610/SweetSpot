@@ -1,15 +1,13 @@
 import { supabase, Photo } from './supabase';
 
 // Função para comprimir imagem no lado do cliente
-export async function compressImage(file: File, maxWidth: number = 600, quality: number = 0.92): Promise<File> {
+export async function compressImage(file: File, maxWidth: number = 600, quality: number = 0.85): Promise<File> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
     img.onload = () => {
-      console.log('Imagem original:', file.size, 'bytes', img.width, 'x', img.height);
-      
       // Calcula novas dimensões mantendo aspect ratio
       let width = img.width;
       let height = img.height;
@@ -22,26 +20,33 @@ export async function compressImage(file: File, maxWidth: number = 600, quality:
       canvas.width = width;
       canvas.height = height;
 
+      // Melhora a qualidade da renderização
+      if (ctx) {
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+      }
+
       // Desenha a imagem comprimida
       ctx?.drawImage(img, 0, 0, width, height);
 
+      // Mantém o formato original se for PNG, caso contrário usa JPEG
+      const outputFormat = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+      
       // Converte para blob com qualidade reduzida
       canvas.toBlob(
         (blob) => {
           if (blob) {
             const compressedFile = new File([blob], file.name, {
-              type: 'image/jpeg',
+              type: outputFormat,
               lastModified: Date.now(),
             });
-            console.log('Imagem comprimida:', compressedFile.size, 'bytes', width, 'x', height);
-            console.log('Redução:', ((file.size - compressedFile.size) / file.size * 100).toFixed(1), '%');
             resolve(compressedFile);
           } else {
             reject(new Error('Falha ao comprimir imagem'));
           }
         },
-        'image/jpeg',
-        quality
+        outputFormat,
+        outputFormat === 'image/jpeg' ? quality : undefined
       );
     };
 
