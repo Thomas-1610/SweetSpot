@@ -27,7 +27,7 @@ export default function QuerSaberPage() {
               Quer saber?
             </h1>
             <p className="font-body-lg text-on-surface-variant mt-4" style={{ fontFamily: 'var(--font-pixel-body)' }}>
-              Um cantinho para guardar coisas que quero dizer, lembranças e aquelas coisas aleatórias.
+              Um lugar para guardar coisas que quero dizer, lembranças e aquelas coisas aleatórias.
             </p>
           </div>
 
@@ -37,6 +37,27 @@ export default function QuerSaberPage() {
             </h2>
             <p className="font-body-lg text-on-surface" style={{ fontFamily: 'var(--font-pixel-body)' }}>
               Por isso que te tive a ideia de te presentear com um :)
+            </p>
+          </PixelCard>
+          <PixelCard className="flex flex-col gap-4">
+            <h2 className="font-headline-sm uppercase text-on-surface" style={{ fontFamily: 'var(--font-pixel)' }}>
+              Pra você saber
+            </h2>
+            <p className="font-body-lg text-on-surface" style={{ fontFamily: 'var(--font-pixel-body)' }}>
+              Ignorando o fato de que nos conhecemos no Tinder..
+              Mas como eu tinha dito, eu gosto de você, de te fazer algo e ver que 
+              você ficou feliz, gosto da sensação que isso me traz.
+
+              Uma das primeiras coisas que me chamou atenção em você foi sua dedicação, mesmo sem trabalhar você tava 
+              ali estudando todos os dias e mantendo uma rotina dedicada e tbm esforçada, não se cobre muito quando
+              o mundo querer te derrubar pois infelizmente ele vai, mas tudo na vida tem seus altos e baixos.
+
+              Como tudo na vida tem seu lado bom e ruim eu espero poder te ajudar em momentos ruins, assim como 
+              compartilhamos e criamos momentos bons não seria justo vc passar por coisas ruins sem me dizer assim como 
+              eu passar por coisas ruins sem te falar.
+
+              Penso em vc todos os dias então pode ter certeza que mesmo dando umas sumidas às vezes, em momentos inoportunos eu começo a 
+              vagar pensando em vc.
             </p>
           </PixelCard>
         </div>
