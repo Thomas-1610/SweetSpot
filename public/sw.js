@@ -1,38 +1,65 @@
-// Service Worker for OneSignal Web Push Notifications
-const CACHE_NAME = 'sweetspot-v1'
-const urlsToCache = ['/', '/mensagens', '/galeria']
+// Service Worker do SweetSpot — recebe Web Push mesmo com o site fechado.
+// Não faz cache de páginas: o conteúdo vem sempre da rede.
 
-self.addEventListener('install', (event) => {
+self.addEventListener('install', () => {
+  self.skipWaiting()
+})
+
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache)
-    })
+    (async () => {
+      // Limpa o cache da versão antiga (OneSignal) que servia páginas desatualizadas
+      const keys = await caches.keys()
+      await Promise.all(keys.map((key) => caches.delete(key)))
+      await self.clients.claim()
+    })()
   )
 })
 
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request)
-    })
+self.addEventListener('push', (event) => {
+  let data = {}
+  try {
+    data = event.data ? event.data.json() : {}
+  } catch {
+    data = { body: event.data ? event.data.text() : '' }
+  }
+
+  const title = data.title || '💌 Nova mensagem no SweetSpot'
+  const url = data.url || '/mensagens'
+
+  event.waitUntil(
+    (async () => {
+      // Avisa abas abertas para recarregarem a lista de mensagens
+      const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+      windows.forEach((client) => client.postMessage({ type: 'new-message' }))
+
+      await self.registration.showNotification(title, {
+        body: data.body || 'Você tem uma nova mensagem 💕',
+        icon: '/icon-192.png',
+        badge: '/badge-96.png',
+        tag: data.tag || 'sweetspot-message',
+        renotify: true,
+        vibrate: [120, 60, 120],
+        data: { url },
+      })
+    })()
   )
 })
 
-// OneSignal Service Worker setup
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()
-  
-  // Handle notification click - open the app
+  const targetUrl = new URL(event.notification.data?.url || '/mensagens', self.location.origin).href
+
   event.waitUntil(
-    clients.matchAll({ type: 'window' }).then((clientList) => {
-      for (const client of clientList) {
-        if (client.url === '/' && 'focus' in client) {
-          return client.focus()
+    (async () => {
+      const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+      for (const client of windows) {
+        if (new URL(client.url).origin === self.location.origin && 'focus' in client) {
+          await client.focus()
+          return client.navigate(targetUrl)
         }
       }
-      if (clients.openWindow) {
-        return clients.openWindow('/')
-      }
-    })
+      return self.clients.openWindow(targetUrl)
+    })()
   )
 })

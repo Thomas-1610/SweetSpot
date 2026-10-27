@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import Header from './Header';
 import Navigation from './Navigation';
+import PushSync from './PushSync';
 import WelcomeStories from './WelcomeStories';
 
 const PAGE_TITLES: Record<string, string> = {
@@ -27,6 +28,7 @@ export default function AppChrome({ children }: { children: React.ReactNode }) {
         {children}
       </div>
       <WelcomeStories />
+      <PushSync />
     </div>
   );
 }

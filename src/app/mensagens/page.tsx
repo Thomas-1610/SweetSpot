@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import PixelButton from '@/components/PixelButton';
 import PixelCard from '@/components/PixelCard';
-// import PushNotificationPermission from '@/components/PushNotificationPermission';
+import PushNotificationPermission from '@/components/PushNotificationPermission';
 import MessageModal from '@/components/MessageModal';
 import { getMessages, sendMessage, deleteMessage } from '@/lib/messages';
+import { notifyNewMessage } from '@/lib/pushClient';
 import { Message } from '@/lib/supabase';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 
@@ -28,6 +29,16 @@ export default function Mensagens() {
     }
     loadMessages();
   }, [currentUser, router]);
+
+  // O service worker avisa quando chega push: atualiza a lista se a aba estiver aberta
+  useEffect(() => {
+    if (!('serviceWorker' in navigator)) return;
+    const onMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'new-message') loadMessages();
+    };
+    navigator.serviceWorker.addEventListener('message', onMessage);
+    return () => navigator.serviceWorker.removeEventListener('message', onMessage);
+  }, []);
 
   async function loadMessages() {
     try {
@@ -101,6 +112,7 @@ export default function Mensagens() {
       try {
         const sentMessage = await sendMessage(currentUser.username, newMessage, currentUser.id);
         if (sentMessage) {
+          notifyNewMessage(sentMessage.id);
           setMessages([...messages, sentMessage]);
           setNewMessage('');
           setShowCompose(false);
@@ -127,8 +139,6 @@ export default function Mensagens() {
 
   return (
     <div className="min-h-screen bg-surface">
-      {/* <PushNotificationPermission userId="você" /> */}
-      
       <main className="md:pt-20 pt-16 min-h-screen bg-surface overflow-x-hidden">
         <div className="flex flex-col w-full max-w-4xl mx-auto px-4 md:px-6 py-6 md:py-12 gap-4 md:gap-6 pb-[80px] md:pb-12">
           {/* Header Section */}
@@ -140,6 +150,8 @@ export default function Mensagens() {
               Aqui voce pode deixar mensagens, todo tipo de mensagem que quiser. :)
             </p>
           </div>
+
+          {currentUser && <PushNotificationPermission userId={currentUser.id} />}
 
           {/* Compose Section - Always visible on desktop */}
           <div className="hidden md:block">

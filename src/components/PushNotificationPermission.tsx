@@ -5,56 +5,44 @@ import PixelButton from './PixelButton'
 import PixelCard from './PixelCard'
 
 interface PushNotificationPermissionProps {
-  userId?: string
+  userId: string
 }
 
-export default function PushNotificationPermission({ userId = 'você' }: PushNotificationPermissionProps) {
-  const { permission, isSubscribed, isLoading, requestPermission } = usePushNotifications(userId)
+// Cartão inline: só aparece enquanto o aparelho ainda não recebe notificações
+export default function PushNotificationPermission({ userId }: PushNotificationPermissionProps) {
+  const { status, isSubscribing, subscribe } = usePushNotifications(userId)
 
-  if (isLoading) {
+  if (status === 'loading' || status === 'unsupported' || status === 'subscribed') {
     return null
   }
 
-  if (permission === 'granted' && isSubscribed) {
+  if (status === 'denied') {
     return (
-      <div className="fixed bottom-4 right-4 z-50">
-        <PixelCard className="p-3 bg-primary-container text-on-primary-container">
-          <p className="font-body-sm text-center" style={{ fontFamily: 'var(--font-pixel-body)' }}>
-            🔔 Notificações ativadas
-          </p>
-        </PixelCard>
-      </div>
-    )
-  }
-
-  if (permission === 'denied') {
-    return (
-      <div className="fixed bottom-4 right-4 z-50">
-        <PixelCard className="p-3 bg-error-container text-on-error-container">
-          <p className="font-body-sm text-center" style={{ fontFamily: 'var(--font-pixel-body)' }}>
-            🔕 Notificações bloqueadas
-          </p>
-        </PixelCard>
-      </div>
+      <PixelCard className="flex items-start gap-3 bg-error-container text-on-error-container">
+        <span className="material-symbols-outlined">notifications_off</span>
+        <p className="font-body-md" style={{ fontFamily: 'var(--font-pixel-body)' }}>
+          As notificações estão bloqueadas. Para receber avisos de novas mensagens, toque no cadeado
+          ao lado do endereço do site, abra Permissões e ative Notificações.
+        </p>
+      </PixelCard>
     )
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
-      <PixelCard className="p-4 max-w-sm">
-        <p className="font-body-sm mb-3" style={{ fontFamily: 'var(--font-pixel-body)' }}>
-          Receba notificações quando tiver novas mensagens! 💕
-        </p>
-        <PixelButton
-          variant="primary"
-          size="sm"
-          onClick={requestPermission}
-          className="w-full"
-        >
-          <span className="material-symbols-outlined">notifications_active</span>
-          <span>Ativar Notificações</span>
-        </PixelButton>
-      </PixelCard>
-    </div>
+    <PixelCard className="flex flex-col md:flex-row md:items-center gap-3">
+      <p className="font-body-md text-on-surface flex-1" style={{ fontFamily: 'var(--font-pixel-body)' }}>
+        Receba um aviso no celular quando chegar mensagem nova, mesmo com o site fechado 💕
+      </p>
+      <PixelButton
+        variant="primary"
+        size="sm"
+        onClick={subscribe}
+        disabled={isSubscribing}
+        className="w-full md:w-auto"
+      >
+        <span className="material-symbols-outlined">notifications_active</span>
+        <span>{isSubscribing ? 'Ativando...' : 'Ativar notificações'}</span>
+      </PixelButton>
+    </PixelCard>
   )
 }

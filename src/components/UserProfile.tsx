@@ -5,6 +5,7 @@ import PixelButton from './PixelButton';
 import PixelCard from './PixelCard';
 import ProfilePhotoUpload from './ProfilePhotoUpload';
 import { getCurrentUser, logoutUser, saveSession, subscribeToSession } from '@/lib/auth';
+import { removeSubscriptionFromServer } from '@/lib/pushClient';
 import { useRouter } from 'next/navigation';
 
 export default function UserProfile() {
@@ -31,6 +32,8 @@ export default function UserProfile() {
 
   const handleLogout = () => {
     setIsLoggingOut(true);
+    // Este aparelho deixa de receber as notificações do usuário que saiu
+    removeSubscriptionFromServer().catch((error) => console.error('Error removing push subscription:', error));
     window.setTimeout(() => {
       logoutUser();
       router.push('/login');

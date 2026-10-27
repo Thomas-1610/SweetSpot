@@ -1,74 +1,79 @@
-# Configuração do OneSignal para Web Push Notifications
+# Notificações Push (Web Push / VAPID)
 
-## Passo 1: Criar conta no OneSignal
+Quando alguém envia uma mensagem, o outro recebe uma notificação no Android
+**mesmo com o site fechado**. Não depende de serviço pago (OneSignal etc.):
+usa o Web Push padrão do navegador, entregue pelo próprio Chrome/Android.
 
-1. Acesse https://onesignal.com/
-2. Crie uma conta gratuita
-3. Clique em "New App/Website"
-4. Dê um nome (ex: "SweetSpot")
-5. Selecione "Web Push" como plataforma
-6. Clique em "Next"
+## Como funciona
 
-## Passo 2: Configurar Web Push
-
-1. **Site Name**: SweetSpot
-2. **Site URL**: Sua URL de produção (ex: https://seusite.com)
-3. **Localhost**: Marque "My site is not fully live yet" para testar localmente
-4. **Auto-hide welcome notification**: Desmarque se quiser testar
-5. Clique em "Next"
-
-## Passo 3: Obter credenciais
-
-Após criar o app, você terá:
-- **App ID**: Na dashboard do OneSignal (Settings > Keys & IDs)
-- **REST API Key**: Na mesma página (Authentication Key)
-
-## Passo 4: Configurar Edge Function
-
-No Supabase, adicione as seguintes variáveis de ambiente:
-
-1. Vá para seu projeto no Supabase
-2. Navegue para: Edge Functions > Settings
-3. Adicione as variáveis:
-   - `ONE_SIGNAL_APP_ID`: Seu App ID do OneSignal
-   - `ONE_SIGNAL_API_KEY`: Sua REST API Key do OneSignal
-   - `SUPABASE_URL`: Já existe no seu projeto
-   - `SUPABASE_SERVICE_ROLE_KEY`: Já existe no seu projeto
-
-## Passo 5: Deploy da Edge Function
-
-No terminal, na pasta do projeto:
-
-```bash
-npx supabase functions deploy send-push-notification
+```
+[Celular A] envia mensagem ──insert──▶ Supabase (messages)
+     │
+     └─POST /api/push/notify {messageId}──▶ Next.js (servidor)
+                                              │ relê a mensagem, marca push_sent_at
+                                              │ busca push_subscriptions do outro usuário
+                                              └─web-push (VAPID)──▶ FCM / Mozilla
+                                                                      │
+[Celular B] public/sw.js ◀── push (mesmo com o site fechado) ─────────┘
+            mostra a notificação; clique abre /mensagens
 ```
 
-## Passo 6: Executar migrations no Supabase
+| Arquivo | Papel |
+| --- | --- |
+| `public/sw.js` | Service worker: recebe o push, mostra a notificação, trata o clique |
+| `src/app/manifest.ts` | Manifest do PWA (ícone, nome, "Adicionar à tela inicial") |
+| `src/lib/pushClient.ts` | Navegador: registrar SW, pedir permissão, inscrever, avisar envio |
+| `src/lib/pushServer.ts` | Servidor: cliente Supabase com service_role + envio `web-push` |
+| `src/app/api/push/subscribe/route.ts` | Salva/remove a inscrição de um dispositivo |
+| `src/app/api/push/notify/route.ts` | Dispara o push de uma mensagem nova (uma única vez) |
+| `src/components/PushSync.tsx` | Registra o SW e religa a inscrição ao usuário logado |
+| `src/components/PushNotificationPermission.tsx` | Cartão "Ativar notificações" na página de mensagens |
 
-No SQL Editor do Supabase, execute os arquivos:
+## Configuração (uma vez)
 
-1. `supabase/migrations/create_user_push_tokens.sql`
-2. `supabase/migrations/create_message_notification_trigger.sql`
+### 1. Banco de dados
 
-## Passo 7: Adicionar variáveis ao .env.local
+No SQL Editor do Supabase, execute `supabase/migrations/create_push_subscriptions.sql`.
+Ele também remove o trigger/tabela antigos do OneSignal.
 
-Adicione ao seu arquivo `.env.local`:
+### 2. Variáveis de ambiente
+
+Em `.env.local` **e** nas variáveis de ambiente da hospedagem (ex.: Vercel):
 
 ```env
-NEXT_PUBLIC_ONESIGNAL_APP_ID=seu-app-id-aqui
+NEXT_PUBLIC_VAPID_PUBLIC_KEY=...
+VAPID_PRIVATE_KEY=...
+VAPID_SUBJECT=mailto:seu-email@exemplo.com
+SUPABASE_SERVICE_ROLE_KEY=...   # Supabase > Project Settings > API > service_role
 ```
 
-## Passo 8: Testar
+Para gerar um novo par VAPID: `npx web-push generate-vapid-keys`.
+Se trocar as chaves, todos precisam ativar as notificações de novo.
+A `VAPID_PRIVATE_KEY` e a `SUPABASE_SERVICE_ROLE_KEY` nunca podem ter o prefixo `NEXT_PUBLIC_`.
 
-1. Reinicie o servidor Next.js
-2. Acesse a página de mensagens
-3. Clique em "Ativar Notificações"
-4. Permita as notificações no navegador
-5. Envie uma mensagem e teste se a notificação é recebida
+`NEXT_PUBLIC_ONESIGNAL_APP_ID` não é mais usada e pode ser apagada.
+
+### 3. Deploy
+
+O site precisa estar em **HTTPS** (Vercel já é). Em `localhost` funciona para testes no PC.
+
+## No celular Android
+
+1. Abra o site no **Chrome** e faça login.
+2. Vá em **Mensagens** e toque em **Ativar notificações** → **Permitir**.
+3. (Recomendado) Menu ⋮ → **Adicionar à tela inicial** / **Instalar app**.
+   Fica com ícone próprio e o Android trata como app.
+4. Feche o site. Quando a outra pessoa enviar uma mensagem, a notificação chega.
+
+Se não chegar com o celular parado há muito tempo:
+- Configurações → Apps → Chrome → Bateria → **Sem restrições**
+  (em Xiaomi/Samsung/Motorola a economia de bateria agressiva pode atrasar pushes).
+- Configurações → Apps → Chrome → Notificações → confirme que o site está permitido.
 
 ## Troubleshooting
 
-- **Notificações não funcionam no localhost**: Verifique se marcou a opção de localhost no OneSignal
-- **Permissão negada**: Verifique as configurações de notificação do navegador
-- **Edge Function não é chamada**: Verifique os logs do Supabase Edge Functions
-- **Token não é salvo**: Verifique se o Supabase client está inicializado corretamente
+- **Cartão "Ativar notificações" não aparece**: o navegador não suporta push, ou
+  `NEXT_PUBLIC_VAPID_PUBLIC_KEY` não está definida (reinicie o `next dev` após editar o `.env.local`).
+- **`/api/push/*` responde 503**: faltam `SUPABASE_SERVICE_ROLE_KEY` ou as chaves VAPID no servidor.
+- **Notificações bloqueadas**: cadeado ao lado do endereço → Permissões → Notificações → Permitir.
+- **iPhone**: só funciona com o site adicionado à tela de início (iOS 16.4+).
